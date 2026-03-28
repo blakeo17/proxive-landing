@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Proxive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232B7FFF'/><text x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Inter,sans-serif' font-weight='700' font-size='20' fill='white'>P</text></svg>" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #080D18;
+      color: #E2E8F0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ── Nav ── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0 24px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      background: rgba(8, 13, 24, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, #2B7FFF 0%, #60A5FA 80%);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg { width: 20px; height: 20px; }
+
+    .logo-wordmark {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: #fff; }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #2B7FFF;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover { background: #1a6ff0; transform: translateY(-1px); }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 140px 0 60px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .page-header-inner {
+      max-width: 720px;
+    }
+
+    .page-label {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #2B7FFF;
+      margin-bottom: 16px;
+    }
+
+    .page-title {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .page-date {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* ── Content ── */
+    .page-content {
+      padding: 72px 0 100px;
+    }
+
+    .policy-body {
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .policy-section h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+
+    .policy-section p {
+      font-size: 16px;
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .policy-section a {
+      color: #60A5FA;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: #060A14;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .footer-main {
+      padding: 48px 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .footer-tagline {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .footer-links a {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.45);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: rgba(255, 255, 255, 0.9); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 20px 0;
+    }
+
+    .footer-bottom-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links, .btn-primary.nav-cta { display: none; }
+      .footer-main { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/>
+          </svg>
+        </div>
+        <span class="logo-wordmark">Proxive</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html#how-it-works">How it Works</a></li>
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="index.html#pricing">Pricing</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+      </ul>
+      <a href="index.html#hero" class="btn-primary nav-cta">Join the Waitlist</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <div class="page-header-inner">
+        <span class="page-label">Legal</span>
+        <h1 class="page-title">Privacy Policy</h1>
+        <p class="page-date">Effective date: March 27, 2026</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="policy-body">
+
+        <div class="policy-section">
+          <h2>What we collect</h2>
+          <p>When you join the Proxive waitlist, we collect your email address. That's it. We don't collect any other personal information unless you provide it voluntarily.</p>
+        </div>
+
+        <div class="policy-section">
+          <h2>How we use it</h2>
+          <p>We use your email address to send you updates about Proxive, notify you when early access opens, and share product news. We will never sell your email to third parties.</p>
+        </div>
+
+        <div class="policy-section">
+          <h2>Email communications</h2>
+          <p>By joining the waitlist you agree to receive occasional emails from Proxive about the product. You can unsubscribe at any time by clicking the unsubscribe link in any email we send.</p>
+        </div>
+
+        <div class="policy-section">
+          <h2>Data storage</h2>
+          <p>Your email is stored securely. We use industry standard practices to protect your information.</p>
+        </div>
+
+        <div class="policy-section">
+          <h2>Third party services</h2>
+          <p>We use Loops to manage our waitlist emails. Your email address is shared with Loops solely for the purpose of sending you Proxive communications.</p>
+        </div>
+
+        <div class="policy-section">
+          <h2>Contact</h2>
+          <p>Questions? Email us at <a href="mailto:support@newburyai.com">support@newburyai.com</a></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo">
+            <div class="logo-mark">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/>
+              </svg>
+            </div>
+            <span class="logo-wordmark">Proxive</span>
+          </a>
+          <span class="footer-tagline">Recruiting outreach, automated</span>
+        </div>
+        <nav class="footer-links">
+          <a href="index.html#how-it-works">How it Works</a>
+          <a href="index.html#features">Features</a>
+          <a href="index.html#pricing">Pricing</a>
+          <a href="index.html#faq">FAQ</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms</a>
+        </nav>
+        <a href="index.html#hero" class="btn-primary">Join Waitlist</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="footer-bottom-inner">
+          <p class="footer-copy">Copyright 2026 Newbury AI LLC. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

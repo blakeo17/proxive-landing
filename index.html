@@ -1,0 +1,4473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proxive: Recruiting Outreach, Automated.</title>
+  <meta name="description" content="Proxive is an AI agent that finds candidates, writes personalized emails, and follows up automatically, so you can focus on placing talent, not chasing it" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Favicon: purple P lettermark as SVG data URI -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232B7FFF'/><text x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Inter,sans-serif' font-weight='700' font-size='20' fill='white'>P</text></svg>" />
+
+  <style>
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 68px;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #ffffff;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ============================================================
+       SCROLL ANIMATION
+    ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+    .reveal-delay-6 { transition-delay: 0.6s; }
+
+    /* ============================================================
+       TYPOGRAPHY HELPERS
+    ============================================================ */
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #2B7FFF;
+      background: rgba(43, 127, 255, 0.1);
+      border: 1px solid rgba(43, 127, 255, 0.25);
+      border-radius: 100px;
+      padding: 4px 14px;
+      margin-bottom: 20px;
+    }
+
+    .section-headline {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #0F172A;
+      margin-bottom: 16px;
+    }
+
+    .section-subheadline {
+      font-size: 18px;
+      color: #6B7280;
+      line-height: 1.6;
+      max-width: 560px;
+    }
+
+    .section-header {
+      margin-bottom: 64px;
+    }
+
+    .section-header.centered {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .section-header.centered .section-subheadline {
+      text-align: center;
+    }
+
+    /* ============================================================
+       LAYOUT
+    ============================================================ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section {
+      padding: 120px 0;
+    }
+
+    section:nth-child(even) {
+      background: #F0F4FF;
+    }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0 24px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      background: rgba(8, 13, 24, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      transition: background 0.3s ease;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Logo */
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #2B7FFF 0%, #60A5FA 80%);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .logo-wordmark {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    /* Nav links */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #ffffff;
+    }
+
+    /* Nav CTA */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #2B7FFF;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 100px;
+      padding: 0 24px;
+      height: 44px;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.02);
+      filter: brightness(1.1);
+    }
+
+    .btn-primary.large {
+      height: 52px;
+      font-size: 16px;
+      padding: 0 28px;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 100px;
+      padding: 0 24px;
+      height: 44px;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: #ffffff;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Mobile nav */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 68px;
+      left: 0;
+      right: 0;
+      background: rgba(8, 13, 24, 0.97);
+      backdrop-filter: blur(20px);
+      padding: 24px;
+      z-index: 999;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mobile-menu.open {
+      display: block;
+    }
+
+    .mobile-menu ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .mobile-menu ul li a {
+      display: block;
+      padding: 12px 0;
+      font-size: 17px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.8);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* ============================================================
+       HERO SECTION
+    ============================================================ */
+    @keyframes bgShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes orbFloat1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%       { transform: translate(40px, -60px) scale(1.08); }
+      66%       { transform: translate(-30px, 30px) scale(0.95); }
+    }
+
+    @keyframes orbFloat2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      40%       { transform: translate(-50px, 40px) scale(1.05); }
+      70%       { transform: translate(30px, -40px) scale(0.92); }
+    }
+
+    @keyframes orbFloat3 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50%       { transform: translate(20px, 50px) scale(1.1); }
+    }
+
+    @keyframes badgeFloat {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-5px); }
+    }
+
+    @keyframes gradientShimmer {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    #hero {
+      background: linear-gradient(135deg, #060A14 0%, #080D18 40%, #070C1A 70%, #050810 100%);
+      background-size: 400% 400%;
+      animation: bgShift 18s ease infinite;
+      padding: 150px 0 110px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Dot grid overlay */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(43, 127, 255, 0.18) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    /* Top glow */
+    #hero::after {
+      content: '';
+      position: absolute;
+      top: -160px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1000px;
+      height: 700px;
+      background: radial-gradient(ellipse, rgba(43, 127, 255, 0.14) 0%, rgba(43, 127, 255, 0.04) 50%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Floating orbs */
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(80px);
+    }
+
+    .hero-orb-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(43, 127, 255, 0.15) 0%, transparent 70%);
+      top: -80px;
+      left: -100px;
+      animation: orbFloat1 20s ease-in-out infinite;
+    }
+
+    .hero-orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, transparent 70%);
+      top: 60px;
+      right: -80px;
+      animation: orbFloat2 25s ease-in-out infinite;
+    }
+
+    .hero-orb-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(43, 127, 255, 0.1) 0%, transparent 70%);
+      bottom: -40px;
+      left: 30%;
+      animation: orbFloat3 18s ease-in-out infinite;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 0.86fr 1.14fr;
+      gap: 32px 56px;
+      align-items: center;
+    }
+
+    .hero-left {
+      /* left column — text-align inherited from responsive rules */
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #93C5FD;
+      background: rgba(43, 127, 255, 0.1);
+      border: 1px solid rgba(43, 127, 255, 0.3);
+      border-radius: 100px;
+      padding: 7px 18px;
+      margin-bottom: 32px;
+      box-shadow: 0 0 20px rgba(43, 127, 255, 0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+      animation: badgeFloat 4s ease-in-out infinite;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      background: #2B7FFF;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(43, 127, 255, 0.8);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px rgba(43, 127, 255, 0.8); }
+      50%       { opacity: 0.6; transform: scale(1.4); box-shadow: 0 0 14px rgba(43, 127, 255, 0.4); }
+    }
+
+    .hero-headline {
+      font-size: clamp(38px, 5.8vw, 64px);
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+    }
+
+    .hero-headline .gradient-text {
+      background: linear-gradient(90deg, #2B7FFF 0%, #60A5FA 40%, #93C5FD 70%, #2B7FFF 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShimmer 4s linear infinite;
+    }
+
+    .hero-subheadline {
+      font-size: 19px;
+      color: rgba(200, 215, 240, 0.6);
+      line-height: 1.65;
+      max-width: 520px;
+      margin: 0 0 40px;
+    }
+
+    /* Waitlist form */
+    .waitlist-form {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 520px;
+      margin: 0;
+    }
+
+    .waitlist-input {
+      flex: 1;
+      height: 54px;
+      background: rgba(8, 20, 48, 0.6);
+      border: 1px solid rgba(43, 127, 255, 0.3);
+      border-radius: 100px;
+      padding: 0 22px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      color: #ffffff;
+      outline: none;
+      box-shadow: 0 0 0 0 rgba(43, 127, 255, 0), inset 0 1px 0 rgba(255,255,255,0.04);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .waitlist-input::placeholder {
+      color: rgba(148, 175, 220, 0.45);
+    }
+
+    .waitlist-input:focus {
+      border-color: rgba(43, 127, 255, 0.75);
+      background: rgba(8, 20, 48, 0.8);
+      box-shadow: 0 0 0 3px rgba(43, 127, 255, 0.15), 0 0 20px rgba(43, 127, 255, 0.12);
+    }
+
+    .waitlist-success {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: rgba(96, 165, 250, 0.12);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      border-radius: 100px;
+      padding: 12px 20px;
+      color: #60A5FA;
+      font-size: 15px;
+      font-weight: 500;
+      max-width: 500px;
+      margin: 0;
+    }
+
+    .waitlist-success.show {
+      display: flex;
+    }
+
+    .hero-trust {
+      margin-top: 16px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Social proof logos */
+    .social-proof {
+      grid-column: 1 / -1;
+      margin-top: 64px;
+      text-align: center;
+    }
+
+    .social-proof-label {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(148, 175, 220, 0.35);
+      margin-bottom: 20px;
+    }
+
+    .logo-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .logo-pill {
+      padding: 8px 22px;
+      background: rgba(43, 127, 255, 0.05);
+      border: 1px solid rgba(43, 127, 255, 0.18);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(148, 175, 220, 0.45);
+      letter-spacing: 0.01em;
+      box-shadow: 0 0 12px rgba(43, 127, 255, 0.06);
+      transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+
+    .logo-pill:hover {
+      border-color: rgba(43, 127, 255, 0.4);
+      color: rgba(148, 175, 220, 0.7);
+      box-shadow: 0 0 18px rgba(43, 127, 255, 0.14);
+    }
+
+    /* ============================================================
+       HERO MOCKUP (right column)
+    ============================================================ */
+    .hero-right {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-right: -100px;
+    }
+
+    .hero-mock-glow {
+      display: none;
+    }
+
+    .hero-mock {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 32px 80px rgba(0, 0, 0, 0.55),
+        0 0 70px 4px rgba(43, 127, 255, 0.32),
+        0 0 160px 24px rgba(43, 127, 255, 0.16);
+      transform: scale(0.88) rotate(2.5deg) translateY(-10px);
+      transform-origin: center right;
+    }
+
+    .hero-mock-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 11px 16px;
+      background: #13151F;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .hero-mock-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .hero-mock-dot:nth-child(1) { background: #FF5F57; }
+    .hero-mock-dot:nth-child(2) { background: #FEBC2E; }
+    .hero-mock-dot:nth-child(3) { background: #28C840; }
+
+    .hero-mock-url {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 26px;
+      padding: 0 16px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      font-size: 11.5px;
+      color: rgba(255, 255, 255, 0.45);
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+
+    .hero-mock-app {
+      display: flex;
+      height: 420px;
+    }
+
+    .hero-mock-sidebar {
+      width: 160px;
+      min-width: 160px;
+      background: #F8FAFC;
+      border-right: 1px solid #E5E7EB;
+      padding: 18px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .hero-mock-sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #0F172A;
+      padding: 0 6px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .hero-mock-sidebar-logo svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .hero-mock-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .hero-mock-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #64748B;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .hero-mock-nav-item.hm-active {
+      background: rgba(43, 127, 255, 0.1);
+      color: #2563EB;
+      font-weight: 600;
+    }
+
+    .hero-mock-nav-item svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .hero-mock-p-body {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .hero-mock-p-hdr {
+      padding: 18px 16px 14px;
+      border-bottom: 1px solid #F1F5F9;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .hero-mock-p-hdr h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 0 0 3px;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.2;
+    }
+
+    .hero-mock-p-sub {
+      font-size: 12px;
+      color: #64748B;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .hero-mock-p-filter {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border: 1px solid #E2E8F0;
+      border-radius: 7px;
+      font-size: 12px;
+      color: #64748B;
+      font-family: 'Inter', sans-serif;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .hero-mock-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .hero-mock-table th {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #94A3B8;
+      text-align: left;
+      padding: 10px 16px;
+      border-bottom: 1px solid #E5E7EB;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    .hero-mock-table td {
+      font-size: 13px;
+      color: #334155;
+      padding: 11px 16px;
+      border-bottom: 1px solid #F1F5F9;
+    }
+
+    .hero-mock-table td:first-child {
+      font-weight: 600;
+      color: #0F172A;
+      white-space: nowrap;
+    }
+
+    .hm-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11.5px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .hm-badge-green  { background: rgba(34, 197, 94, 0.12);   color: #16A34A; }
+    .hm-badge-amber  { background: rgba(234, 179, 8, 0.15);   color: #92400E; }
+    .hm-badge-blue   { background: rgba(43, 127, 255, 0.12);  color: #2563EB; }
+    .hm-badge-gray   { background: rgba(100, 116, 139, 0.1);  color: #64748B; border: 1px solid #E2E8F0; }
+
+    /* ============================================================
+       PROBLEM SECTION
+    ============================================================ */
+    /* ============================================================
+       PROBLEM SECTION — UPGRADED
+    ============================================================ */
+    #problem {
+      background: #F4F6FD;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Dot grid texture */
+    #problem::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(43, 127, 255, 0.1) 1.5px, transparent 1.5px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #problem .container {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Dramatic headline for this section */
+    #problem .section-headline {
+      font-size: clamp(40px, 6.5vw, 66px);
+      line-height: 1.05;
+    }
+
+    .pain-killing {
+      color: #B91C1C;
+      font-style: italic;
+    }
+
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    /* Glassmorphism pain card */
+    .pain-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid rgba(43, 127, 255, 0.15);
+      border-top: none;
+      border-radius: 16px;
+      padding: 32px;
+      overflow: hidden;
+      box-shadow:
+        0 4px 24px rgba(43, 127, 255, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transition: box-shadow 0.35s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .pain-card:hover {
+      box-shadow:
+        0 18px 52px rgba(43, 127, 255, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      transform: translateY(-6px);
+    }
+
+    /* Red / orange accent line at the very top — signals pain */
+    .pain-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg,
+        #EF4444 0%,
+        #F97316 38%,
+        #FBBF24 65%,
+        #F97316 82%,
+        #EF4444 100%);
+      z-index: 10;
+    }
+
+    /* Watermark number — large, faded, behind content */
+    .pain-card .pain-watermark {
+      position: absolute;
+      bottom: -18px;
+      right: -4px;
+      font-size: 118px;
+      font-weight: 900;
+      letter-spacing: -0.07em;
+      line-height: 1;
+      color: rgba(43, 127, 255, 0.06);
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Larger icon circle with blue glow */
+    .pain-icon {
+      width: 64px;
+      height: 64px;
+      background: rgba(43, 127, 255, 0.1);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow:
+        0 0 0 8px rgba(43, 127, 255, 0.055),
+        0 0 28px rgba(43, 127, 255, 0.2);
+    }
+
+    .pain-icon svg {
+      width: 30px;
+      height: 30px;
+      color: #2B7FFF;
+    }
+
+    .pain-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0F172A;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+
+    .pain-card p {
+      font-size: 15px;
+      color: #6B7280;
+      line-height: 1.65;
+    }
+
+    /* ---- Pain icon animations ---- */
+
+    /* Clock: minute hand ticks forward — steps() gives discrete jumps */
+    .clock-minute {
+      transform-origin: 12px 12px;
+      animation: clock-tick 10s steps(60, end) infinite;
+    }
+
+    @keyframes clock-tick {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Bars: staggered equalizer — each bar shrinks to a different width */
+    .bar-1, .bar-2, .bar-3 {
+      transform-box: fill-box;
+      transform-origin: left center;
+    }
+
+    @keyframes bar-shrink-1 {
+      0%, 100% { transform: scaleX(1); }
+      50%       { transform: scaleX(0.35); }
+    }
+    @keyframes bar-shrink-2 {
+      0%, 100% { transform: scaleX(1); }
+      50%       { transform: scaleX(0.6); }
+    }
+    @keyframes bar-shrink-3 {
+      0%, 100% { transform: scaleX(1); }
+      50%       { transform: scaleX(0.2); }
+    }
+
+    .bar-1 { animation: bar-shrink-1 1.6s ease-in-out infinite; }
+    .bar-2 { animation: bar-shrink-2 1.2s ease-in-out infinite 0.3s; }
+    .bar-3 { animation: bar-shrink-3 2.0s ease-in-out infinite 0.6s; }
+
+    /* Dollar: periodic shake — like money slipping away */
+    .dollar-svg {
+      transform-origin: 50% 50%;
+      animation: dollar-shake 3.5s ease-in-out infinite;
+    }
+
+    @keyframes dollar-shake {
+      0%, 60%, 100% { transform: rotate(0deg); }
+      63%  { transform: rotate(-12deg); }
+      67%  { transform: rotate(12deg); }
+      71%  { transform: rotate(-8deg); }
+      75%  { transform: rotate(8deg); }
+      79%  { transform: rotate(-3deg); }
+      83%  { transform: rotate(0deg); }
+    }
+
+    /* ============================================================
+       SOLUTION SECTION
+    ============================================================ */
+    #solution {
+      background: #080D18;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #solution::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at 50% -20%, rgba(43, 127, 255, 0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    #solution .section-headline,
+    #solution .eyebrow {
+      color: #ffffff;
+    }
+
+    #solution .section-headline {
+      color: #ffffff;
+    }
+
+    #solution .section-subheadline {
+      color: rgba(240, 240, 240, 0.55);
+    }
+
+    #solution .eyebrow {
+      color: #2B7FFF;
+    }
+
+    .mockups-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 56px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Browser frame */
+    .browser-frame {
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 32px 80px rgba(0, 0, 0, 0.5),
+        0 0 80px rgba(43, 127, 255, 0.28);
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .browser-chrome {
+      background: #0D1628;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .browser-dots span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .browser-dots span:nth-child(1) { background: #FF5F57; }
+    .browser-dots span:nth-child(2) { background: #FEBC2E; }
+    .browser-dots span:nth-child(3) { background: #28C840; }
+
+    .browser-url {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.3);
+      font-family: 'Inter', monospace;
+    }
+
+    .browser-body {
+      background: #0B1020;
+    }
+
+    /* Mockup 1: Brief Input */
+    .mock-brief {
+      padding: 48px 40px;
+    }
+
+    .mock-brief-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.35);
+      margin-bottom: 12px;
+    }
+
+    .mock-brief h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 28px;
+    }
+
+    .mock-input-area {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .mock-input-icon {
+      width: 20px;
+      height: 20px;
+      color: #2B7FFF;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .mock-input-text {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.5;
+    }
+
+    .mock-input-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 18px;
+      background: #2B7FFF;
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .mock-run-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #2B7FFF;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 24px;
+      cursor: pointer;
+    }
+
+    /* Mockup 2: Prospect Table */
+    .mock-table-wrap {
+      padding: 0;
+      overflow-x: auto;
+    }
+
+    .mock-table-header {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .mock-table-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .mock-table-meta {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    table.mock-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    table.mock-table thead tr {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    table.mock-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    table.mock-table td {
+      padding: 13px 16px;
+      color: rgba(255, 255, 255, 0.75);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    table.mock-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.mock-table tbody tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 100px;
+      padding: 3px 10px;
+    }
+
+    .status-badge::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    .badge-sent { background: rgba(107, 114, 128, 0.2); color: #9CA3AF; }
+    .badge-sent::before { background: #9CA3AF; }
+
+    .badge-opened { background: rgba(251, 191, 36, 0.15); color: #FCD34D; }
+    .badge-opened::before { background: #FCD34D; }
+
+    .badge-replied { background: rgba(52, 211, 153, 0.15); color: #34D399; }
+    .badge-replied::before { background: #34D399; }
+
+    .badge-followup { background: rgba(96, 165, 250, 0.15); color: #60A5FA; }
+    .badge-followup::before { background: #60A5FA; }
+
+    /* Mockup 3: Email composer */
+    .mock-email {
+      padding: 0;
+    }
+
+    .email-topbar {
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .email-topbar-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .email-sent-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #34D399;
+    }
+
+    .email-field {
+      padding: 14px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .email-field-label {
+      color: rgba(255, 255, 255, 0.3);
+      width: 55px;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+
+    .email-field-value {
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1.5;
+    }
+
+    .email-subject-value {
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .email-body {
+      padding: 24px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.65);
+      line-height: 1.75;
+    }
+
+    .email-body p { margin-bottom: 12px; }
+    .email-body p:last-child { margin-bottom: 0; }
+
+    /* ============================================================
+       HOW IT WORKS
+    ============================================================ */
+    /* ── How It Works ────────────────────────── */
+    #how-it-works { background: #ffffff; }
+
+    #how-it-works .section-headline {
+      font-size: clamp(40px, 5.5vw, 64px);
+      font-weight: 800;
+    }
+
+    .hiw-speed-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #DCFCE7;
+      color: #166534;
+      border: 1px solid #BBF7D0;
+      border-radius: 100px;
+      padding: 5px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    /* Timeline row */
+    .hiw-timeline {
+      display: flex;
+      align-items: stretch;
+      margin-top: 52px;
+    }
+
+    /* Connector between cards */
+    .hiw-connector {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      width: 56px;
+      padding: 0 4px;
+      margin-top: -60px; /* align to mid-card visually */
+    }
+    .hiw-connector-track {
+      position: relative;
+      width: 100%;
+      height: 2px;
+      background: repeating-linear-gradient(90deg, #D1D5DB 0px, #D1D5DB 4px, transparent 4px, transparent 10px);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    .hiw-connector-fill {
+      position: absolute;
+      top: 0; left: 0; height: 100%; width: 0%;
+      background: repeating-linear-gradient(90deg, #2B7FFF 0px, #2B7FFF 4px, transparent 4px, transparent 10px);
+      transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hiw-connector-fill.in-view { width: 100%; }
+
+    /* Step cards */
+    .step-card {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 20px;
+      padding: 32px 28px 28px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
+      text-align: left;
+    }
+    .step-card:hover {
+      box-shadow: 0 8px 32px rgba(43,127,255,0.1), 0 2px 8px rgba(0,0,0,0.05);
+      border-color: rgba(43,127,255,0.2);
+      transform: translateY(-3px);
+      transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    /* Watermark number */
+    .step-wm {
+      position: absolute;
+      top: -14px; right: 10px;
+      font-size: 96px;
+      font-weight: 900;
+      color: rgba(0,0,0,0.04);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Mini visual area */
+    .step-mini {
+      margin-bottom: 20px;
+    }
+
+    /* Mini: text input mockup */
+    .mini-input-mock {
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mini-inp-text {
+      flex: 1;
+      font-size: 11px;
+      color: #9CA3AF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mini-inp-cursor {
+      color: #2B7FFF;
+      font-weight: 300;
+      font-size: 13px;
+      animation: hiw-blink 1s step-end infinite;
+    }
+    @keyframes hiw-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .mini-inp-btn {
+      background: #2B7FFF;
+      color: #fff;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* Mini: profile rows */
+    .mini-profiles {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .mini-profile { display: flex; align-items: center; gap: 8px; }
+    .mp-avatar {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .mp1 .mp-avatar { background: linear-gradient(135deg, #6366F1, #8B5CF6); }
+    .mp2 .mp-avatar { background: linear-gradient(135deg, #0EA5E9, #38BDF8); }
+    .mp3 .mp-avatar { background: linear-gradient(135deg, #10B981, #34D399); }
+    .mp-lines { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+    .mp-line { height: 4px; background: #E5E7EB; border-radius: 3px; }
+    .mp-line.s { width: 55%; }
+
+    /* Mini: email mockup */
+    .mini-email-mock {
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .mini-em-hdr {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .mini-em-dot { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; flex-shrink: 0; }
+    .mini-em-subj { flex: 1; height: 5px; background: #E5E7EB; border-radius: 3px; }
+    .mini-em-sent {
+      font-size: 9px; font-weight: 600; color: #166534;
+      background: #DCFCE7; border-radius: 100px; padding: 2px 7px; flex-shrink: 0;
+      animation: hiw-pulse 2s ease-in-out infinite;
+    }
+    @keyframes hiw-pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+    .mini-em-lines { display: flex; flex-direction: column; gap: 4px; }
+    .mini-em-line { height: 4px; background: #E5E7EB; border-radius: 3px; }
+    .mini-em-line.s { width: 60%; }
+
+    .step-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0F172A;
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+    .step-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #6B7280;
+      margin-bottom: 12px;
+    }
+    .step-time-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #0EA5E9; flex-shrink: 0;
+    }
+    .step-card p {
+      font-size: 14px;
+      color: #6B7280;
+      line-height: 1.65;
+    }
+
+    /* ============================================================
+       FEATURES
+    ============================================================ */
+    #features {
+      background: #F4F7FF;
+    }
+
+    #features .section-header {
+      margin-bottom: 40px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: #ffffff;
+      border: 1.5px solid #E4EAFF;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.3s ease,
+                  border-color 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 48px rgba(43, 127, 255, 0.13), 0 4px 16px rgba(0, 0, 0, 0.06);
+      border-color: rgba(43, 127, 255, 0.35);
+    }
+
+    /* Glow border — 21st.dev Spotlight Card technique
+       Radial gradient tracked to global cursor, masked to border area only
+       via mask-clip: padding-box + border-box with mask-composite: intersect */
+    .feature-card::before,
+    .feature-card::after {
+      pointer-events: none;
+      content: '';
+      position: absolute;
+      inset: -1.5px;
+      border: 1.5px solid transparent;
+      border-radius: 18px;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      background-size: 200vw 200vh;
+      mask: linear-gradient(#000, #000) padding-box,
+            linear-gradient(#000, #000);
+      -webkit-mask: linear-gradient(#000, #000) padding-box,
+                    linear-gradient(#000, #000);
+      mask-composite: exclude;
+      -webkit-mask-composite: destination-out;
+    }
+
+    .feature-card::before {
+      background-image: radial-gradient(
+        240px 240px at
+        calc(var(--gx, -9999) * 1px)
+        calc(var(--gy, -9999) * 1px),
+        hsl(calc(220 + var(--gxp, 0) * 30) 100% 62% / 0.9),
+        transparent 100%
+      );
+      filter: brightness(1.6);
+    }
+
+    .feature-card::after {
+      background-image: radial-gradient(
+        120px 120px at
+        calc(var(--gx, -9999) * 1px)
+        calc(var(--gy, -9999) * 1px),
+        rgba(255, 255, 255, 0.7),
+        transparent 100%
+      );
+    }
+
+    /* Icon with grid + radial-fade pattern */
+    .feature-icon {
+      width: 46px;
+      height: 46px;
+      background: #EEF2FF;
+      border: 1px solid rgba(43, 127, 255, 0.16);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-icon::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(43, 127, 255, 0.22) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(43, 127, 255, 0.22) 1px, transparent 1px);
+      background-size: 7px 7px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 20%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 20%, transparent 100%);
+    }
+
+    .feature-icon svg {
+      width: 22px;
+      height: 22px;
+      color: #2B7FFF;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0F172A;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: #6B7280;
+      line-height: 1.6;
+    }
+
+    /* Per-icon micro-animations */
+    @keyframes fc-float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-4px); }
+    }
+    @keyframes fc-pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.14); }
+    }
+    @keyframes fc-tilt {
+      0%   { transform: rotate(-4deg); }
+      50%  { transform: rotate(4deg); }
+      100% { transform: rotate(-4deg); }
+    }
+    @keyframes fc-drift {
+      0%, 100% { transform: translate(0, 0); }
+      33%       { transform: translate(2px, -3px); }
+      66%       { transform: translate(-2px, 1px); }
+    }
+    @keyframes fc-glow {
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(43,127,255,0.35)); }
+      50%       { filter: drop-shadow(0 0 7px rgba(43,127,255,0.75)); }
+    }
+
+    .feature-card:nth-child(1) .feature-icon svg { animation: fc-float 5s ease-in-out infinite; }
+    .feature-card:nth-child(2) .feature-icon svg { animation: fc-pulse 4s ease-in-out infinite; }
+    .feature-card:nth-child(3) .feature-icon svg { animation: fc-tilt 4.5s ease-in-out infinite; }
+    .feature-card:nth-child(4) .feature-icon svg { animation: fc-drift 6s ease-in-out infinite; }
+    .feature-card:nth-child(5) .feature-icon svg { animation: fc-glow 5s ease-in-out infinite; }
+    .feature-card:nth-child(6) .feature-icon svg { animation: fc-float 7s ease-in-out infinite; animation-delay: -3s; }
+
+    /* ============================================================
+       TESTIMONIALS
+    ============================================================ */
+    #testimonials {
+      background: #F0F4FF;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .testimonial-card {
+      background: #ffffff;
+      border: 1px solid #E2E8FF;
+      border-radius: 16px;
+      padding: 32px;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    .testimonial-card:hover {
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.07);
+      transform: translateY(-2px);
+    }
+
+    .stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 20px;
+    }
+
+    .stars span {
+      color: #FBBF24;
+      font-size: 16px;
+    }
+
+    .testimonial-quote {
+      font-size: 16px;
+      color: #374151;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .avatar-1 { background: linear-gradient(135deg, #2B7FFF, #60A5FA); color: #fff; }
+    .avatar-2 { background: linear-gradient(135deg, #F59E0B, #EF4444); color: #fff; }
+    .avatar-3 { background: linear-gradient(135deg, #10B981, #3B82F6); color: #fff; }
+
+    .testimonial-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0F172A;
+    }
+
+    .testimonial-title {
+      font-size: 13px;
+      color: #6B7280;
+    }
+
+    /* ============================================================
+       PRICING
+    ============================================================ */
+    #pricing {
+      background: #ffffff;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .pricing-card {
+      background: #ffffff;
+      border: 1px solid #E2E8FF;
+      border-radius: 20px;
+      padding: 36px 32px;
+      position: relative;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    .pricing-card:hover {
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
+    }
+
+    .pricing-card.popular {
+      border-color: #2B7FFF;
+      box-shadow: 0 0 0 1px #2B7FFF, 0 16px 48px rgba(43, 127, 255, 0.18);
+      transform: translateY(-8px);
+    }
+
+    .pricing-card.popular:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 0 0 1px #2B7FFF, 0 24px 60px rgba(43, 127, 255, 0.22);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #2B7FFF, #60A5FA);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 5px 16px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .pricing-tier-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #6B7280;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+
+    .pricing-price {
+      margin-bottom: 8px;
+    }
+
+    .pricing-price .amount {
+      font-size: 44px;
+      font-weight: 800;
+      color: #0F172A;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .pricing-price .period {
+      font-size: 16px;
+      font-weight: 500;
+      color: #6B7280;
+      margin-left: 4px;
+    }
+
+    .pricing-price .free-label {
+      font-size: 28px;
+      font-weight: 800;
+      color: #2B7FFF;
+      letter-spacing: -0.02em;
+    }
+
+    .pricing-desc {
+      font-size: 14px;
+      color: #6B7280;
+      margin-bottom: 28px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid #E5E7EB;
+      line-height: 1.5;
+    }
+
+    .pricing-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .pricing-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.4;
+    }
+
+    .check-icon {
+      width: 18px;
+      height: 18px;
+      background: rgba(43, 127, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .check-icon svg {
+      width: 10px;
+      height: 10px;
+      color: #2B7FFF;
+    }
+
+    .pricing-card .btn-primary {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .pricing-card .btn-outline {
+      width: 100%;
+      height: 48px;
+      border-radius: 100px;
+      border: 1px solid #E2E8FF;
+      background: transparent;
+      font-size: 15px;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pricing-card .btn-outline:hover {
+      border-color: #2B7FFF;
+      color: #2B7FFF;
+      background: rgba(43, 127, 255, 0.04);
+    }
+
+    /* ============================================================
+       FAQ
+    ============================================================ */
+    #faq {
+      background: #F0F4FF;
+    }
+
+    .faq-list {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .faq-item:first-child {
+      border-top: 1px solid #E5E7EB;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 22px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: #0F172A;
+      transition: color 0.2s;
+    }
+
+    .faq-question:hover {
+      color: #2B7FFF;
+    }
+
+    .faq-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.3s ease, border-color 0.2s, background 0.2s;
+    }
+
+    .faq-icon svg {
+      width: 14px;
+      height: 14px;
+      color: #6B7280;
+      transition: color 0.2s;
+    }
+
+    .faq-item.open .faq-question {
+      color: #2B7FFF;
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+      border-color: #2B7FFF;
+      background: rgba(43, 127, 255, 0.08);
+    }
+
+    .faq-item.open .faq-icon svg {
+      color: #2B7FFF;
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0;
+      font-size: 16px;
+      color: #6B7280;
+      line-height: 1.75;
+      opacity: 0;
+      transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                  padding 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.35s ease;
+    }
+
+    .faq-answer.open {
+      max-height: 400px;
+      padding: 0 0 22px 0;
+      opacity: 1;
+    }
+
+    /* ============================================================
+       FINAL CTA SECTION
+    ============================================================ */
+    #cta {
+      background: #080D18;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #cta::before {
+      content: '';
+      position: absolute;
+      top: -120px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse, rgba(43, 127, 255, 0.18) 0%, rgba(43, 127, 255, 0.05) 50%, transparent 70%);
+      pointer-events: none;
+    }
+
+    #cta .section-headline {
+      color: #ffffff;
+      max-width: 640px;
+      margin: 0 auto 16px;
+    }
+
+    #cta .section-subheadline {
+      color: rgba(240, 240, 240, 0.55);
+      margin: 0 auto 40px;
+      text-align: center;
+    }
+
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-trust {
+      margin-top: 16px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: #080D18;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .footer-main {
+      padding: 48px 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .footer-tagline {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .footer-links a {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.45);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 20px 0;
+    }
+
+    .footer-bottom-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    /* Hero split collapses at 960px */
+    @media (max-width: 960px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 56px;
+      }
+      #hero { padding: 120px 0 80px; }
+      .hero-right {
+        max-width: 560px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .hero-mock {
+        transform: rotate(1.5deg) translateY(-6px);
+        transform-origin: center center;
+      }
+      .hero-subheadline {
+        margin: 0 auto 40px;
+      }
+      .waitlist-form {
+        margin: 0 auto;
+      }
+      .waitlist-success {
+        margin: 0 auto;
+      }
+      .social-proof {
+        grid-column: auto;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .hero-mock { transform: rotate(1deg) translateY(-4px); transform-origin: center center; }
+      .hero-mock-sidebar { width: 120px; min-width: 120px; }
+      .hero-mock-app { height: 300px; }
+      .hero-mock-p-hdr { padding: 14px 14px 10px; }
+      .hero-mock-p-hdr h3 { font-size: 14px; }
+      .hero-mock-table th,
+      .hero-mock-table td { padding: 8px 12px; }
+      .hero-mock-table td { font-size: 11.5px; }
+    }
+
+    @media (max-width: 1024px) {
+      .pain-grid,
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .steps-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      .steps-grid::before { display: none; }
+
+      .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .pricing-card.popular {
+        transform: none;
+        grid-column: span 2;
+        max-width: 420px;
+        justify-self: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      section { padding: 80px 0; }
+      #hero { padding: 100px 0 60px; }
+
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-headline { font-size: clamp(36px, 10vw, 52px); }
+      .hero-subheadline { font-size: 17px; }
+      .hero-trust { text-align: center; }
+
+      .waitlist-form {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .waitlist-input {
+        width: 100%;
+      }
+
+      .btn-primary.large {
+        width: 100%;
+      }
+
+      .pain-grid,
+      .features-grid,
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-card.popular {
+        transform: none;
+        grid-column: auto;
+        max-width: none;
+      }
+
+      table.mock-table th:nth-child(3),
+      table.mock-table td:nth-child(3),
+      table.mock-table th:nth-child(4),
+      table.mock-table td:nth-child(4) {
+        display: none;
+      }
+
+      .footer-main {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+      }
+
+      .footer-links {
+        gap: 16px;
+        justify-content: flex-start;
+      }
+
+      .logo-bar {
+        gap: 16px;
+      }
+
+      .section-headline { font-size: clamp(26px, 7vw, 36px); }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      section { padding: 64px 0; }
+
+      .mock-brief { padding: 28px 20px; }
+      .mock-table-header { padding: 14px 16px; }
+      .email-topbar { padding: 12px 16px; }
+      .email-field { padding: 12px 16px; }
+      .email-body { padding: 16px; }
+    }
+
+
+    /* ============================================================
+       PRODUCT DEMO
+    ============================================================ */
+    #solution { padding-top: 140px; padding-bottom: 160px; }
+    #solution .section-header { text-align: center; align-items: center; }
+    #solution .section-subheadline { text-align: center; color: rgba(200,215,240,0.6); }
+
+    /* Browser frame */
+    .pdx-frame {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-top: 2px solid #0EA5E9;
+      box-shadow:
+        0 0 0 1px rgba(14,165,233,0.25),
+        0 32px 100px rgba(0,0,0,0.65),
+        0 0 50px rgba(14,165,233,0.45),
+        0 0 120px rgba(14,165,233,0.22),
+        0 0 220px rgba(43,127,255,0.12);
+    }
+
+    /* Chrome top bar */
+    .pdx-chrome {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      background: #1C2333;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .pdx-chrome-dots { display: flex; gap: 6px; }
+    .pdx-chrome-dots span {
+      display: block; width: 12px; height: 12px; border-radius: 50%;
+    }
+    .pdx-chrome-dots span:nth-child(1) { background: #FF5F57; }
+    .pdx-chrome-dots span:nth-child(2) { background: #FEBC2E; }
+    .pdx-chrome-dots span:nth-child(3) { background: #28C840; }
+
+    .pdx-url-bar {
+      flex: 1;
+      background: rgba(255,255,255,0.07);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* App shell */
+    .pdx-app {
+      display: flex;
+      flex-direction: row;
+      height: 420px;
+      background: #fff;
+      font-family: 'Inter', -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Left sidebar */
+    .pdx-sidebar {
+      width: 175px;
+      min-width: 175px;
+      flex-shrink: 0;
+      background: #F0F2F5;
+      border-right: 1px solid #E2E4E9;
+      padding: 20px 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pdx-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 8px;
+      margin-bottom: 22px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: -0.01em;
+    }
+    .pdx-logo svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+    .pdx-nav { display: flex; flex-direction: column; gap: 3px; }
+
+    .pdx-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .pdx-nav-item:hover { background: #EAECF0; }
+    .pdx-nav-item.pdx-active { background: #DBEAFE; color: #0EA5E9; font-weight: 600; }
+    .pdx-nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* Content area */
+    .pdx-content {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    /* Screens */
+    .pdx-screen {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translateX(18px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+      overflow-y: auto;
+      background: #fff;
+    }
+    .pdx-screen.pdx-active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+    .pdx-screen.pdx-exit {
+      opacity: 0;
+      transform: translateX(-18px);
+    }
+
+    /* ── Progress bar ────────────────────────── */
+    .pdx-progress-wrap {
+      height: 3px;
+      background: rgba(14,165,233,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .pdx-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0EA5E9, #38BDF8, #7DD3FC, #38BDF8);
+      background-size: 200% 100%;
+      border-radius: 0 2px 2px 0;
+      box-shadow: 0 0 10px rgba(14,165,233,0.7);
+      transition: width 1.4s cubic-bezier(0.4, 0, 0.6, 1);
+      animation: progressShimmer 1.5s linear infinite;
+    }
+    @keyframes progressShimmer {
+      0%   { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* ── Screen 1: Brief ─────────────────────── */
+    .pdx-brief {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 0;
+      overflow-y: auto;
+    }
+    .pdx-brief-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+      max-width: 540px;
+    }
+    .pdx-brief-top h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+    .pdx-brief-top > p {
+      font-size: 13px;
+      color: #6B7280;
+      margin-bottom: 14px;
+    }
+    .pdx-prompt-chips {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 10px;
+      margin-bottom: 0;
+    }
+    .pdx-chip {
+      font-size: 11.5px;
+      font-weight: 400;
+      color: #6B7280;
+      background: #F3F4F6;
+      border: 1px solid #E5E7EB;
+      border-radius: 100px;
+      padding: 3px 11px;
+      white-space: nowrap;
+    }
+    .pdx-textarea {
+      width: 100%;
+      max-width: none;
+      height: 90px;
+      border: 1px solid #D1D5DB;
+      border-radius: 10px;
+      padding: 16px 18px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.6;
+      resize: none;
+      outline: none;
+      margin-bottom: 10px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .pdx-textarea::placeholder { color: #9CA3AF; }
+    .pdx-textarea:focus {
+      border-color: #0EA5E9;
+      box-shadow: 0 0 0 3px rgba(14,165,233,0.12);
+    }
+    .pdx-run-btn {
+      width: 100%;
+      max-width: none;
+      height: 44px;
+      background: #0EA5E9;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .pdx-run-btn:hover:not(:disabled) { background: #0284C7; transform: translateY(-1px); }
+    .pdx-run-btn:disabled { background: #7DD3FC; cursor: not-allowed; transform: none; }
+
+    @keyframes pdx-spin { to { transform: rotate(360deg); } }
+    .pdx-spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: pdx-spin 0.65s linear infinite;
+    }
+
+    @keyframes pdx-bounce {
+      0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+    .pdx-loading-dots { display: inline-flex; gap: 4px; align-items: center; }
+    .pdx-loading-dots span {
+      width: 6px; height: 6px; border-radius: 50%; background: #fff;
+      animation: pdx-bounce 1.2s infinite ease-in-out both;
+    }
+    .pdx-loading-dots span:nth-child(2) { animation-delay: 0.16s; }
+    .pdx-loading-dots span:nth-child(3) { animation-delay: 0.32s; }
+
+    /* ── Screen 2: Prospects ─────────────────── */
+    .pdx-p-hdr {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 24px 32px 14px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .pdx-p-hdr h2 { font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 2px; letter-spacing: -0.01em; }
+    .pdx-p-sub { font-size: 13px; color: #6B7280; }
+    .pdx-filter-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 7px;
+      padding: 6px 13px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;
+    }
+    .pdx-filter-btn:hover { background: #F9FAFB; }
+    .pdx-table { width: 100%; border-collapse: collapse; }
+    .pdx-table th {
+      text-align: left; padding: 10px 32px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #9CA3AF;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .pdx-table td { padding: 14px 32px; border-bottom: 1px solid #F3F4F6; font-size: 13.5px; }
+    .pdx-table td:nth-child(1) { font-weight: 600; color: #111827; }
+    .pdx-table td:nth-child(2) { color: #6B7280; }
+    .pdx-table td:nth-child(3) { color: #374151; }
+    .pdx-table td:nth-child(4), .pdx-table th:nth-child(4) { padding-right: 20px; }
+    .pdx-table tbody tr { cursor: pointer; transition: background 0.1s; }
+    .pdx-table tbody tr:hover td { background: #EFF6FF; }
+    .pdx-badge { display: inline-block; font-size: 12px; font-weight: 500; border-radius: 100px; padding: 3px 12px; }
+    .b-replied  { background: #DCFCE7; color: #166534; }
+    .b-opened   { background: #FEF9C3; color: #854D0E; }
+    .b-sent     { background: #F3F4F6; color: #4B5563; border: 1px solid #E5E7EB; }
+    .b-followup { background: #DBEAFE; color: #1E40AF; white-space: nowrap; }
+
+    /* ── Screen 3: Email ─────────────────────── */
+    .pdx-email-layout { display: flex; flex-direction: row; height: 100%; }
+    .pdx-email-list {
+      width: 22%; min-width: 190px; flex-shrink: 0;
+      border-right: 1px solid #E5E7EB; overflow-y: auto; background: #fff;
+    }
+    .pdx-el-hdr {
+      padding: 14px 20px 10px; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; border-bottom: 1px solid #F3F4F6;
+    }
+    .pdx-ep {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 13px 20px; cursor: pointer; border-bottom: 1px solid #F5F6F8; transition: background 0.1s;
+    }
+    .pdx-ep:hover { background: #F9FAFB; }
+    .pdx-ep.pdx-active { background: #EFF6FF; }
+    .pdx-ep-name  { font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 2px; }
+    .pdx-ep-title { font-size: 12px; color: #6B7280; }
+    .pdx-ep-co    { font-size: 12px; color: #9CA3AF; }
+    .pdx-edot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .d-green  { background: #22C55E; }
+    .d-orange { background: #F59E0B; }
+    .d-gray   { background: #D1D5DB; }
+    .d-blue   { background: #3B82F6; }
+
+    .pdx-email-main {
+      flex: 1; min-width: 0; padding: 16px 22px; overflow-y: hidden;
+      position: relative; background: #F8F9FC;
+    }
+    .pdx-sent-badge {
+      position: absolute; top: 14px; right: 18px;
+      display: flex; align-items: center; gap: 6px;
+      background: #DCFCE7; border: 1px solid #BBF7D0; border-radius: 100px;
+      padding: 4px 12px; font-size: 11.5px; font-weight: 600; color: #166534;
+    }
+    .pdx-email-card {
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 10px;
+      padding: 18px 22px; margin-top: 46px;
+    }
+    .pdx-em-meta { margin-bottom: 14px; }
+    .pdx-em-row { font-size: 12.5px; color: #6B7280; margin-bottom: 4px; }
+    .pdx-em-row b { font-weight: 500; color: #111827; }
+    .pdx-em-subj b { font-weight: 700; }
+    .pdx-em-body { font-size: 13px; color: #374151; line-height: 1.72; }
+    .pdx-em-body p { margin-bottom: 12px; }
+    .pdx-em-body p:last-child { margin-bottom: 0; }
+    .pdx-sig-name { font-weight: 600; color: #111827; }
+    .pdx-sig-role { color: #0EA5E9; font-size: 12px; }
+    .pdx-eview { display: none; }
+    .pdx-eview.pdx-active { display: block; }
+
+
+
+
+    /* ── Solution section background orbs ────── */
+    .solution-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(90px);
+    }
+    .solution-orb-1 {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, rgba(14,165,233,0.11) 0%, transparent 70%);
+      top: -80px; left: -120px;
+      animation: orbFloat1 22s ease-in-out infinite;
+    }
+    .solution-orb-2 {
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(43,127,255,0.09) 0%, transparent 70%);
+      bottom: -60px; right: -100px;
+      animation: orbFloat2 28s ease-in-out infinite;
+    }
+    .solution-orb-3 {
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 70%);
+      top: 45%; left: 55%;
+      animation: orbFloat3 20s ease-in-out infinite;
+    }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .pdx-table td:nth-child(3), .pdx-table th:nth-child(3) { display: none; }
+      .pdx-email-list { width: 200px; min-width: 180px; }
+    }
+    @media (max-width: 620px) {
+      .pdx-app { height: auto; min-height: 500px; }
+      .pdx-screen { position: relative; inset: auto; transform: none; opacity: 1; pointer-events: auto; }
+      .pdx-screen:not(.pdx-active) { display: none; }
+      .pdx-content { overflow: visible; }
+      .pdx-email-list { width: 180px; min-width: 180px; }
+      .pdx-ep-co { display: none; }
+    }
+    @media (max-width: 480px) {
+      .pdx-app { flex-direction: column; }
+      .pdx-sidebar { width: 100%; min-width: 0; flex-direction: row; align-items: center; padding: 10px 14px; border-right: none; border-bottom: 1px solid #E5E7EB; }
+      .pdx-logo { margin-bottom: 0; margin-right: 12px; }
+      .pdx-nav { flex-direction: row; gap: 3px; }
+      .pdx-nav-item { padding: 7px 10px; font-size: 13px; }
+      .pdx-email-list { display: none; }
+    }
+
+    /* ============================================================
+       PREMIUM UPGRADE: AURORA HERO EXPANSION
+    ============================================================ */
+    .hero-orb-4 {
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.11) 0%, transparent 65%);
+      top: -200px;
+      right: -250px;
+      animation: orbFloat1 26s ease-in-out infinite reverse;
+    }
+
+    .hero-orb-5 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.09) 0%, transparent 70%);
+      bottom: 10px;
+      right: 8%;
+      animation: orbFloat3 22s ease-in-out infinite;
+    }
+
+    /* ============================================================
+       HERO BEAM SWEEP
+    ============================================================ */
+    @keyframes beamSweep {
+      0%   { left: -10%; opacity: 0; }
+      5%   { opacity: 1; }
+      50%  { opacity: 0.6; }
+      95%  { opacity: 0; }
+      100% { left: 110%; opacity: 0; }
+    }
+
+    .hero-beam {
+      display: none;
+    }
+
+    /* ============================================================
+       MARQUEE LOGO SCROLLER
+    ============================================================ */
+    @keyframes logoMarquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .logo-marquee-wrapper {
+      overflow: hidden;
+      mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+      width: 100%;
+    }
+
+    .logo-marquee-track {
+      display: flex;
+      gap: 10px;
+      width: max-content;
+      animation: logoMarquee 28s linear infinite;
+    }
+
+    .logo-marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    /* ============================================================
+       STATS STRIP
+    ============================================================ */
+    #stats {
+      background: #ffffff;
+      padding: 56px 0;
+      border-top: 1px solid rgba(43, 127, 255, 0.08);
+      border-bottom: 1px solid rgba(43, 127, 255, 0.08);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 20px 24px;
+      border-right: 1px solid #E2E8FF;
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-number-wrap {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 1px;
+      margin-bottom: 8px;
+    }
+
+    .stat-prefix {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2B7FFF;
+      line-height: 1;
+    }
+
+    .stat-number {
+      font-size: clamp(34px, 4vw, 52px);
+      font-weight: 800;
+      color: #0F172A;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .stat-suffix {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2B7FFF;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 13.5px;
+      color: #6B7280;
+      line-height: 1.45;
+      max-width: 140px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(1),
+      .stat-item:nth-child(2) { border-bottom: 1px solid #E2E8FF; }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat-item { border-right: none !important; border-bottom: 1px solid #E2E8FF; }
+      .stat-item:last-child { border-bottom: none; }
+    }
+
+    /* ============================================================
+       SPOTLIGHT CARD HOVER EFFECT (mouse-tracking glow)
+    ============================================================ */
+    .feature-card,
+    .pain-card,
+    .step-card,
+    .testimonial-card {
+      position: relative;
+    }
+
+    /* feature-card uses the glow border ::before/::after (defined above).
+       Keep the old inner spotlight only for pain + step cards. */
+    .pain-card::before,
+    .step-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      background: radial-gradient(
+        480px circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+        rgba(43, 127, 255, 0.07) 0%,
+        transparent 60%
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .pain-card:hover::before,
+    .step-card:hover::before { opacity: 1; }
+
+    .feature-card > *,
+    .pain-card > *,
+    .step-card > * { position: relative; z-index: 1; }
+
+    /* ============================================================
+       ENHANCED STEP CARD
+    ============================================================ */
+    .step-card {
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.35s ease;
+    }
+
+    .step-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(43, 127, 255, 0.12);
+    }
+
+    /* ============================================================
+       PRICING POPULAR GLOW PULSE
+    ============================================================ */
+    @keyframes priceGlow {
+      0%, 100% {
+        box-shadow: 0 0 0 1px #2B7FFF,
+                    0 16px 48px rgba(43, 127, 255, 0.18);
+      }
+      50% {
+        box-shadow: 0 0 0 1px #60A5FA,
+                    0 16px 48px rgba(43, 127, 255, 0.30),
+                    0 0 40px rgba(43, 127, 255, 0.14);
+      }
+    }
+
+    .pricing-card.popular {
+      animation: priceGlow 3.5s ease-in-out infinite;
+    }
+
+    .pricing-card.popular:hover {
+      animation: none;
+      box-shadow: 0 0 0 1px #60A5FA,
+                  0 24px 60px rgba(43, 127, 255, 0.28),
+                  0 0 50px rgba(43, 127, 255, 0.18);
+    }
+
+    /* ============================================================
+       MAGNETIC BUTTON (JS-driven, CSS fallback)
+    ============================================================ */
+    .btn-primary {
+      will-change: transform;
+    }
+
+    /* ============================================================
+       ENHANCED TESTIMONIAL CARD
+    ============================================================ */
+    .testimonial-card {
+      transition: box-shadow 0.3s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+    }
+
+    .testimonial-card:hover {
+      box-shadow: 0 12px 48px rgba(43, 127, 255, 0.1);
+      transform: translateY(-4px);
+      border-color: rgba(43, 127, 255, 0.2);
+    }
+
+    /* ============================================================
+       REVEAL ANIMATION VARIANTS
+    ============================================================ */
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.96);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal-scale.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ============================================================
+       HERO EYEBROW — shimmer sweep on badge
+    ============================================================ */
+    @keyframes badgeShimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .hero-eyebrow {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-eyebrow::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.18) 50%,
+        transparent 100%
+      );
+      background-size: 200% 100%;
+      animation: badgeShimmer 3.5s ease-in-out infinite;
+    }
+
+    /* ============================================================
+       CTA SECTION BEAM
+    ============================================================ */
+    #cta {
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes ctaBeam {
+      0%   { left: -5%; opacity: 0; }
+      8%   { opacity: 0.5; }
+      92%  { opacity: 0; }
+      100% { left: 105%; opacity: 0; }
+    }
+
+    .cta-beam {
+      display: none;
+    }
+
+    /* Loops form state styles */
+    .newsletter-error {
+      display: none;
+      align-items: center;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 100px;
+      padding: 12px 20px;
+      max-width: 500px;
+      margin: 0;
+    }
+    .newsletter-error-message {
+      color: #FCA5A5;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .newsletter-back-button {
+      display: none;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+      padding: 0;
+    }
+    .newsletter-back-button:hover { color: rgba(255, 255, 255, 0.7); }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <!-- Logo -->
+      <a href="#" class="nav-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/>
+          </svg>
+        </div>
+        <span class="logo-wordmark">Proxive</span>
+      </a>
+
+      <!-- Center links -->
+      <ul class="nav-links">
+        <li><a href="#how-it-works">How it Works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+
+      <!-- CTA + Hamburger -->
+      <a href="#hero" class="btn-primary nav-cta">Join the Waitlist</a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="#how-it-works" onclick="closeMobileMenu()">How it Works</a></li>
+      <li><a href="#features" onclick="closeMobileMenu()">Features</a></li>
+      <li><a href="#pricing" onclick="closeMobileMenu()">Pricing</a></li>
+      <li><a href="#faq" onclick="closeMobileMenu()">FAQ</a></li>
+    </ul>
+    <a href="#hero" class="btn-primary" style="width:100%;justify-content:center;" onclick="closeMobileMenu(); scrollToWaitlist();">Join the Waitlist</a>
+  </div>
+
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="hero">
+    <!-- Floating orbs -->
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="hero-orb hero-orb-4"></div>
+    <div class="hero-orb hero-orb-5"></div>
+    <div class="hero-beam"></div>
+
+    <div class="container">
+      <div class="hero-inner">
+
+        <!-- LEFT: headline + form -->
+        <div class="hero-left">
+          <div class="reveal">
+            <div class="hero-eyebrow">AI-Powered Recruiting Outreach</div>
+          </div>
+
+          <h1 class="hero-headline reveal reveal-delay-1">
+            Your recruiting outreach<br>
+            <span class="gradient-text">on autopilot</span>
+          </h1>
+
+          <p class="hero-subheadline reveal reveal-delay-2">
+            Proxive is an AI agent that finds candidates, writes personalized emails, and follows up automatically, so you can focus on placing talent, not chasing it
+          </p>
+
+          <div class="reveal reveal-delay-3">
+            <div class="newsletter-form-container" id="heroFormContainer">
+              <form class="waitlist-form newsletter-form" action="https://app.loops.so/api/newsletter-form/cmn85yiux0kp10i0qxkxjaca3" method="POST">
+                <input class="waitlist-input newsletter-form-input" placeholder="Enter your work email" required type="email" name="newsletter-form-input" />
+                <button type="submit" class="btn-primary large newsletter-form-button">Join the Waitlist</button>
+                <button type="button" class="btn-primary large newsletter-loading-button" style="display:none;">Please wait...</button>
+              </form>
+              <div class="waitlist-success newsletter-success" style="display:none;">
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#60A5FA" opacity=".2"/><path d="M5 8l2 2 4-4" stroke="#60A5FA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                You're on the list! We'll be in touch.
+              </div>
+              <div class="newsletter-error">
+                <p class="newsletter-error-message">Oops! Something went wrong, please try again</p>
+              </div>
+              <button class="newsletter-back-button" type="button">&larr; Back</button>
+            </div>
+            <p class="hero-trust" style="margin-top:14px;">Join 500+ recruiters already on the waitlist. Free during beta</p>
+          </div>
+        </div>
+
+        <!-- RIGHT: Prospects mockup -->
+        <div class="hero-right reveal reveal-delay-2">
+          <div class="hero-mock-glow"></div>
+
+          <div class="hero-mock">
+            <!-- Browser chrome bar -->
+            <div class="hero-mock-bar">
+              <span class="hero-mock-dot"></span>
+              <span class="hero-mock-dot"></span>
+              <span class="hero-mock-dot"></span>
+              <div class="hero-mock-url">app.proxive.ai</div>
+            </div>
+            <!-- App shell -->
+            <div class="hero-mock-app">
+              <!-- Sidebar -->
+              <div class="hero-mock-sidebar">
+                <div class="hero-mock-sidebar-logo">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#0EA5E9"/></svg>
+                  Proxive
+                </div>
+                <div class="hero-mock-nav">
+                  <div class="hero-mock-nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Brief
+                  </div>
+                  <div class="hero-mock-nav-item hm-active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Prospects
+                  </div>
+                  <div class="hero-mock-nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    Email
+                  </div>
+                </div>
+              </div>
+              <!-- Prospects content -->
+              <div class="hero-mock-p-body">
+                <div class="hero-mock-p-hdr">
+                  <div>
+                    <h3>React Engineers in Austin</h3>
+                    <div class="hero-mock-p-sub">5 prospects found</div>
+                  </div>
+                  <div class="hero-mock-p-filter">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    Filter
+                  </div>
+                </div>
+                <table class="hero-mock-table">
+                  <thead>
+                    <tr><th>Name</th><th>Title</th><th>Company</th><th>Status</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Sarah Chen</td><td>Senior Software Engineer</td><td>TechCorp</td><td><span class="hm-badge hm-badge-green">Replied</span></td></tr>
+                    <tr><td>Michael Rodriguez</td><td>Full Stack Developer</td><td>StartupXYZ</td><td><span class="hm-badge hm-badge-amber">Opened</span></td></tr>
+                    <tr><td>Emily Johnson</td><td>React Developer</td><td>WebSolutions Inc</td><td><span class="hm-badge hm-badge-gray">Email Sent</span></td></tr>
+                    <tr><td>David Kim</td><td>Frontend Engineer</td><td>Digital Dynamics</td><td><span class="hm-badge hm-badge-blue">Follow Up Sent</span></td></tr>
+                    <tr><td>Jessica Martinez</td><td>Software Engineer</td><td>CodeCrafters</td><td><span class="hm-badge hm-badge-amber">Opened</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social proof — spans full width -->
+        <div class="social-proof reveal reveal-delay-4">
+          <p class="social-proof-label">Recruiters from teams at:</p>
+          <div class="logo-marquee-wrapper">
+            <div class="logo-marquee-track">
+              <div class="logo-pill">Google</div>
+              <div class="logo-pill">Salesforce</div>
+              <div class="logo-pill">HubSpot</div>
+              <div class="logo-pill">Stripe</div>
+              <div class="logo-pill">Notion</div>
+              <div class="logo-pill">LinkedIn</div>
+              <div class="logo-pill">Workday</div>
+              <div class="logo-pill">Greenhouse</div>
+              <div class="logo-pill">Lever</div>
+              <div class="logo-pill">Indeed</div>
+              <!-- duplicate for seamless loop -->
+              <div class="logo-pill">Google</div>
+              <div class="logo-pill">Salesforce</div>
+              <div class="logo-pill">HubSpot</div>
+              <div class="logo-pill">Stripe</div>
+              <div class="logo-pill">Notion</div>
+              <div class="logo-pill">LinkedIn</div>
+              <div class="logo-pill">Workday</div>
+              <div class="logo-pill">Greenhouse</div>
+              <div class="logo-pill">Lever</div>
+              <div class="logo-pill">Indeed</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       STATS STRIP
+  ============================================================ -->
+  <section id="stats">
+    <div class="container">
+      <div class="stats-grid">
+
+        <div class="stat-item reveal">
+          <div class="stat-number-wrap">
+            <span class="stat-number" data-target="500">0</span>
+            <span class="stat-suffix">+</span>
+          </div>
+          <div class="stat-label">Recruiters already on the waitlist</div>
+        </div>
+
+        <div class="stat-item reveal reveal-delay-1">
+          <div class="stat-number-wrap">
+            <span class="stat-number" data-target="3">0</span>
+            <span class="stat-suffix">hrs</span>
+          </div>
+          <div class="stat-label">Saved per recruiter per day</div>
+        </div>
+
+        <div class="stat-item reveal reveal-delay-2">
+          <div class="stat-number-wrap">
+            <span class="stat-prefix">$</span>
+            <span class="stat-number" data-target="400">0</span>
+          </div>
+          <div class="stat-label">Monthly savings vs. 3-tool stack</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PROBLEM
+  ============================================================ -->
+  <section id="problem">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="eyebrow">The Problem</span>
+        <h2 class="section-headline">Manual outreach is <span class="pain-killing">killing</span><br>your pipeline</h2>
+        <p class="section-subheadline">Every hour you spend writing emails is an hour you're not placing candidates</p>
+      </div>
+
+      <div class="pain-grid">
+        <!-- Card 1 -->
+        <div class="pain-card reveal reveal-delay-1">
+          <span class="pain-watermark">3hrs</span>
+          <div class="pain-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="12" x2="12" y2="7.5"/>
+              <g class="clock-minute">
+                <line x1="12" y1="12" x2="16" y2="14"/>
+              </g>
+            </svg>
+          </div>
+          <h3>3 Hours Lost Every Day</h3>
+          <p>The average recruiter spends 3+ hours daily finding candidates, researching them, and writing outreach from scratch. That's time that should be spent on calls and placements</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="pain-card reveal reveal-delay-2">
+          <span class="pain-watermark">4×</span>
+          <div class="pain-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="5" rx="1" class="bar-1"/>
+              <rect x="2" y="10" width="20" height="5" rx="1" class="bar-2"/>
+              <rect x="2" y="17" width="20" height="5" rx="1" class="bar-3"/>
+            </svg>
+          </div>
+          <h3>Too Many Tools, Too Much Work</h3>
+          <p>Apollo for leads. Clay for enrichment. ChatGPT for copy. Instantly for sending. Four tools, hours of setup, and you're still doing most of the thinking yourself</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="pain-card reveal reveal-delay-3">
+          <span class="pain-watermark">$</span>
+          <div class="pain-icon">
+            <svg class="dollar-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <h3>Missed Placements, Missed Revenue</h3>
+          <p>Every candidate you don't reach is a placement you don't make. Manual outreach limits your volume. Limited volume limits your revenue</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       SOLUTION
+  ============================================================ -->
+  <section id="solution">
+    <div class="solution-orb solution-orb-1"></div>
+    <div class="solution-orb solution-orb-2"></div>
+    <div class="solution-orb solution-orb-3"></div>
+    <div class="container">
+      <div class="section-header centered reveal">
+        <span class="eyebrow">The Solution</span>
+        <h2 class="section-headline" style="color:#ffffff;">One brief. Hundreds of personalized emails. Zero manual work</h2>
+        <p class="section-subheadline">Proxive handles your entire outreach workflow end to end. You type what you're looking for. We handle the rest</p>
+      </div>
+
+      <!-- Browser frame mockup -->
+      <div class="pdx-frame reveal">
+        <!-- Chrome bar -->
+        <div class="pdx-chrome">
+          <div class="pdx-chrome-dots"><span></span><span></span><span></span></div>
+          <div class="pdx-url-bar">app.proxive.ai</div>
+        </div>
+        <!-- Progress bar -->
+        <div class="pdx-progress-wrap">
+          <div class="pdx-progress-bar" id="pdxProgressBar"></div>
+        </div>
+
+        <!-- App shell -->
+        <div class="pdx-app">
+
+          <!-- Sidebar -->
+          <div class="pdx-sidebar">
+            <div class="pdx-logo">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#0EA5E9"/></svg>
+              Proxive
+            </div>
+            <div class="pdx-nav">
+              <div class="pdx-nav-item pdx-active" data-screen="0" onclick="pdxNav(0)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Brief
+              </div>
+              <div class="pdx-nav-item" data-screen="1" onclick="pdxNav(1)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Prospects
+              </div>
+              <div class="pdx-nav-item" data-screen="2" onclick="pdxNav(2)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Email
+              </div>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="pdx-content">
+
+            <!-- Screen 0: Brief -->
+            <div class="pdx-screen pdx-active" id="pdx-s0">
+              <div class="pdx-brief">
+                <div class="pdx-brief-top">
+                  <h2>What are you looking for?</h2>
+                  <p>Describe your ideal candidates and let Proxive find them</p>
+                  <textarea class="pdx-textarea" placeholder="Find me software engineers in Austin with React experience" readonly></textarea>
+                  <button class="pdx-run-btn" id="pdxRunBtn" onclick="pdxRun()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Run Proxive
+                  </button>
+                  <div class="pdx-prompt-chips">
+                    <span class="pdx-chip">React engineers in Austin</span>
+                    <span class="pdx-chip">Senior PMs in New York</span>
+                    <span class="pdx-chip">Data Scientists remote</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Screen 1: Prospects -->
+            <div class="pdx-screen" id="pdx-s1">
+              <div class="pdx-p-hdr">
+                <div>
+                  <h2>React Engineers in Austin</h2>
+                  <div class="pdx-p-sub">5 prospects found</div>
+                </div>
+                <button class="pdx-filter-btn">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                  Filter
+                </button>
+              </div>
+              <table class="pdx-table">
+                <thead><tr><th>Name</th><th>Title</th><th>Company</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr onclick="pdxGoEmail('sarah')"><td>Sarah Chen</td><td>Senior Software Engineer</td><td>TechCorp</td><td><span class="pdx-badge b-replied">Replied</span></td></tr>
+                  <tr onclick="pdxGoEmail('michael')"><td>Michael Rodriguez</td><td>Full Stack Developer</td><td>StartupXYZ</td><td><span class="pdx-badge b-opened">Opened</span></td></tr>
+                  <tr onclick="pdxGoEmail('emily')"><td>Emily Johnson</td><td>React Developer</td><td>WebSolutions Inc</td><td><span class="pdx-badge b-sent">Email Sent</span></td></tr>
+                  <tr onclick="pdxGoEmail('david')"><td>David Kim</td><td>Frontend Engineer</td><td>Digital Dynamics</td><td><span class="pdx-badge b-followup">Follow Up Sent</span></td></tr>
+                  <tr onclick="pdxGoEmail('jessica')"><td>Jessica Martinez</td><td>Software Engineer</td><td>CodeCrafters</td><td><span class="pdx-badge b-opened">Opened</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Screen 2: Email -->
+            <div class="pdx-screen" id="pdx-s2">
+              <div class="pdx-email-layout">
+
+                <div class="pdx-email-list">
+                  <div class="pdx-el-hdr">Prospects</div>
+                  <div class="pdx-ep pdx-active" data-id="sarah" onclick="pdxShowEmail('sarah')">
+                    <div><div class="pdx-ep-name">Sarah Chen</div><div class="pdx-ep-title">Senior Software Engineer</div><div class="pdx-ep-co">TechCorp</div></div>
+                    <div class="pdx-edot d-green"></div>
+                  </div>
+                  <div class="pdx-ep" data-id="michael" onclick="pdxShowEmail('michael')">
+                    <div><div class="pdx-ep-name">Michael Rodriguez</div><div class="pdx-ep-title">Full Stack Developer</div><div class="pdx-ep-co">StartupXYZ</div></div>
+                    <div class="pdx-edot d-orange"></div>
+                  </div>
+                  <div class="pdx-ep" data-id="emily" onclick="pdxShowEmail('emily')">
+                    <div><div class="pdx-ep-name">Emily Johnson</div><div class="pdx-ep-title">React Developer</div><div class="pdx-ep-co">WebSolutions Inc</div></div>
+                    <div class="pdx-edot d-gray"></div>
+                  </div>
+                  <div class="pdx-ep" data-id="david" onclick="pdxShowEmail('david')">
+                    <div><div class="pdx-ep-name">David Kim</div><div class="pdx-ep-title">Frontend Engineer</div><div class="pdx-ep-co">Digital Dynamics</div></div>
+                    <div class="pdx-edot d-blue"></div>
+                  </div>
+                  <div class="pdx-ep" data-id="jessica" onclick="pdxShowEmail('jessica')">
+                    <div><div class="pdx-ep-name">Jessica Martinez</div><div class="pdx-ep-title">Software Engineer</div><div class="pdx-ep-co">CodeCrafters</div></div>
+                    <div class="pdx-edot d-orange"></div>
+                  </div>
+                </div>
+
+                <div class="pdx-email-main">
+                  <div class="pdx-sent-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Sent
+                  </div>
+
+                  <div class="pdx-eview pdx-active" id="pdx-mail-sarah">
+                    <div class="pdx-email-card">
+                      <div class="pdx-em-meta">
+                        <div class="pdx-em-row">To: <b>sarah.chen@techcorp.com</b></div>
+                        <div class="pdx-em-row pdx-em-subj">Subject: <b>Your work at TechCorp caught my eye, Sarah</b></div>
+                      </div>
+                      <div class="pdx-em-body">
+                        <p>Hi Sarah,</p>
+                        <p>I came across your profile and was genuinely impressed by your work as a Senior Software Engineer at TechCorp. Your React expertise and frontend infrastructure experience is exactly what stands out.</p>
+                        <p>I'm placing engineers for a fast-growing Austin startup building their core team. They need someone who has worked at scale. Your background is a strong match.</p>
+                        <p>Would you be open to a quick 15-minute call this week?</p>
+                        <p>Best, <span class="pdx-sig-name">Alex Thompson</span> &middot; <span class="pdx-sig-role">Talent Partner at Proxive</span></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pdx-eview" id="pdx-mail-michael">
+                    <div class="pdx-email-card">
+                      <div class="pdx-em-meta">
+                        <div class="pdx-em-row">To: <b>m.rodriguez@startupxyz.com</b></div>
+                        <div class="pdx-em-row pdx-em-subj">Subject: <b>Full-stack engineers like you are hard to find, Michael</b></div>
+                      </div>
+                      <div class="pdx-em-body">
+                        <p>Hi Michael,</p>
+                        <p>I was impressed by the range of experience you've built as a Full Stack Developer at StartupXYZ. That kind of end-to-end ownership is exactly what companies are looking for right now.</p>
+                        <p>I'm placing engineers for a well-funded Series B in Austin: real ownership, strong comp, and a genuine voice in product direction.</p>
+                        <p>Open to a quick 15-minute call this week?</p>
+                        <p>Best, <span class="pdx-sig-name">Alex Thompson</span> &middot; <span class="pdx-sig-role">Talent Partner at Proxive</span></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pdx-eview" id="pdx-mail-emily">
+                    <div class="pdx-email-card">
+                      <div class="pdx-em-meta">
+                        <div class="pdx-em-row">To: <b>emily.j@websolutions.com</b></div>
+                        <div class="pdx-em-row pdx-em-subj">Subject: <b>Your React work caught my attention, Emily</b></div>
+                      </div>
+                      <div class="pdx-em-body">
+                        <p>Hi Emily,</p>
+                        <p>I came across your profile and was impressed by your work as a React Developer at WebSolutions Inc. Strong frontend engineers with your depth of experience are genuinely hard to find.</p>
+                        <p>I'm working with a product-led Austin company building their core team. They care about clean code and developer experience. Your background is a strong fit.</p>
+                        <p>Worth a quick 15-minute call this week?</p>
+                        <p>Best, <span class="pdx-sig-name">Alex Thompson</span> &middot; <span class="pdx-sig-role">Talent Partner at Proxive</span></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pdx-eview" id="pdx-mail-david">
+                    <div class="pdx-email-card">
+                      <div class="pdx-em-meta">
+                        <div class="pdx-em-row">To: <b>david.kim@digitaldynamics.com</b></div>
+                        <div class="pdx-em-row pdx-em-subj">Subject: <b>Following up on the Austin frontend role, David</b></div>
+                      </div>
+                      <div class="pdx-em-body">
+                        <p>Hi David,</p>
+                        <p>Wanted to make sure my last note didn't get buried. Your frontend engineering background from Digital Dynamics is exactly what a Series B in Austin needs right now.</p>
+                        <p>They're building a performance-focused React app and want someone who genuinely cares about UI craft. I think you'd be a strong fit.</p>
+                        <p>Would this week work for a quick 15-minute call?</p>
+                        <p>Best, <span class="pdx-sig-name">Alex Thompson</span> &middot; <span class="pdx-sig-role">Talent Partner at Proxive</span></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pdx-eview" id="pdx-mail-jessica">
+                    <div class="pdx-email-card">
+                      <div class="pdx-em-meta">
+                        <div class="pdx-em-row">To: <b>jessica.m@codecrafters.com</b></div>
+                        <div class="pdx-em-row pdx-em-subj">Subject: <b>Saw you opened my email, Jessica</b></div>
+                      </div>
+                      <div class="pdx-em-body">
+                        <p>Hi Jessica,</p>
+                        <p>I noticed you opened my last email and wanted to follow up personally. Your background as a Software Engineer at CodeCrafters is exactly what this Austin-based fintech is looking for.</p>
+                        <p>They're building core infrastructure and want engineers who take real ownership. Strong comp and an exceptional team.</p>
+                        <p>Would a quick 15-minute call work this week?</p>
+                        <p>Best, <span class="pdx-sig-name">Alex Thompson</span> &middot; <span class="pdx-sig-role">Talent Partner at Proxive</span></p>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /pdx-content -->
+        </div><!-- /pdx-app -->
+      </div><!-- /pdx-frame -->
+
+    </div><!-- /container -->
+  </section>
+
+
+  <!-- ============================================================
+       HOW IT WORKS
+  ============================================================ -->
+  <section id="how-it-works">
+    <div class="container">
+      <div class="section-header centered reveal">
+        <span class="eyebrow">How It Works</span>
+        <h2 class="section-headline">From brief to booked calls<br>in minutes</h2>
+        <p class="section-subheadline">Three steps. No setup. No learning curve. Just results</p>
+      </div>
+
+      <div class="hiw-timeline">
+
+        <!-- Step 1 -->
+        <div class="step-card reveal reveal-delay-1">
+          <span class="step-wm">01</span>
+          <div class="step-mini">
+            <div class="mini-input-mock">
+              <span class="mini-inp-text">React engineers in Austin...</span>
+              <span class="mini-inp-cursor">|</span>
+              <div class="mini-inp-btn">Run</div>
+            </div>
+          </div>
+          <h3>Enter Your Brief</h3>
+          <div class="step-time"><span class="step-time-dot"></span>0 seconds</div>
+          <p>Type what you're looking for in plain English. "Engineers in Austin with React experience" is all Proxive needs to get started</p>
+        </div>
+
+        <!-- Connector -->
+        <div class="hiw-connector">
+          <div class="hiw-connector-track">
+            <div class="hiw-connector-fill"></div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card reveal reveal-delay-2">
+          <span class="step-wm">02</span>
+          <div class="step-mini">
+            <div class="mini-profiles">
+              <div class="mini-profile mp1">
+                <div class="mp-avatar">SC</div>
+                <div class="mp-lines"><div class="mp-line"></div><div class="mp-line s"></div></div>
+              </div>
+              <div class="mini-profile mp2">
+                <div class="mp-avatar">MR</div>
+                <div class="mp-lines"><div class="mp-line"></div><div class="mp-line s"></div></div>
+              </div>
+              <div class="mini-profile mp3">
+                <div class="mp-avatar">EJ</div>
+                <div class="mp-lines"><div class="mp-line"></div><div class="mp-line s"></div></div>
+              </div>
+            </div>
+          </div>
+          <h3>Proxive Does the Research</h3>
+          <div class="step-time"><span class="step-time-dot"></span>45 seconds</div>
+          <p>Our AI agent finds matching candidates, researches their background and recent activity, and identifies the right person to contact</p>
+        </div>
+
+        <!-- Connector -->
+        <div class="hiw-connector">
+          <div class="hiw-connector-track">
+            <div class="hiw-connector-fill"></div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card reveal reveal-delay-3">
+          <span class="step-wm">03</span>
+          <div class="step-mini">
+            <div class="mini-email-mock">
+              <div class="mini-em-hdr">
+                <div class="mini-em-dot"></div>
+                <div class="mini-em-subj"></div>
+                <div class="mini-em-sent">✓ Sent</div>
+              </div>
+              <div class="mini-em-lines">
+                <div class="mini-em-line"></div>
+                <div class="mini-em-line s"></div>
+                <div class="mini-em-line"></div>
+              </div>
+            </div>
+          </div>
+          <h3>Personalized Emails Go Out</h3>
+          <div class="step-time"><span class="step-time-dot"></span>2 minutes</div>
+          <p>Proxive writes a unique email for each candidate based on their background and sends from your Gmail. Follow-ups go out automatically if there's no reply</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FEATURES
+  ============================================================ -->
+  <section id="features">
+    <div class="container">
+      <div class="section-header centered reveal">
+        <span class="eyebrow">Features</span>
+        <h2 class="section-headline">Everything you need. Nothing you don't</h2>
+      </div>
+
+      <div class="features-grid">
+
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+          </div>
+          <h3>AI Prospect Research</h3>
+          <p>Proxive searches the web to find candidates that match your brief and enriches each one with relevant background information</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+          </div>
+          <h3>Personalized Email Writing</h3>
+          <p>Every email is written specifically for that candidate. No templates. No copy-paste. Real personalization at scale</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-3">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <h3>Gmail Integration</h3>
+          <p>Emails send directly from your Gmail inbox. Candidates see your name and email address, not a third party tool</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </div>
+          <h3>Campaign Dashboard</h3>
+          <p>See exactly who opened, replied, and clicked in real time. Know what's working and double down on it</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h3>Your Data Stays Yours</h3>
+          <p>We never store candidate data beyond your active campaigns. Your Gmail credentials are encrypted and never shared</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-3">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              <path d="M17 11c1.7.6 3 2.2 3 4"/>
+              <path d="M7 11c-1.7.6-3 2.2-3 4"/>
+            </svg>
+          </div>
+          <h3>AI Candidate Profiles</h3>
+          <p>Each prospect comes with an enriched profile including role history, skills, and context so you always know who you're reaching out to</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       TESTIMONIALS
+  ============================================================ -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="section-header centered reveal">
+        <span class="eyebrow">What Recruiters Are Saying</span>
+        <h2 class="section-headline">Built for recruiters who are serious about growth</h2>
+      </div>
+
+      <div class="testimonials-grid">
+
+        <div class="testimonial-card reveal reveal-delay-1">
+          <div class="stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="testimonial-quote">"I used to spend my whole morning just on outreach. Proxive gave me those hours back. My placement rate went up 40% in the first month."</p>
+          <div class="testimonial-author">
+            <div class="avatar avatar-1">J</div>
+            <div>
+              <div class="testimonial-name">Jessica M.</div>
+              <div class="testimonial-title">Founder, TechTalent Recruiting</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-2">
+          <div class="stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="testimonial-quote">"The personalization is insane. Candidates actually respond because the emails don't sound like a bot wrote them. This is the real deal."</p>
+          <div class="testimonial-author">
+            <div class="avatar avatar-2">D</div>
+            <div>
+              <div class="testimonial-name">Daniel R.</div>
+              <div class="testimonial-title">Senior Recruiter, Apex Staffing</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-3">
+          <div class="stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="testimonial-quote">"We replaced Apollo, Clay, and Instantly with Proxive. Saves us $400 a month and honestly works better than all three combined."</p>
+          <div class="testimonial-author">
+            <div class="avatar avatar-3">M</div>
+            <div>
+              <div class="testimonial-name">Michelle K.</div>
+              <div class="testimonial-title">Co-Founder, Hire Collective</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PRICING
+  ============================================================ -->
+  <section id="pricing">
+    <div class="container">
+      <div class="section-header centered reveal">
+        <span class="eyebrow">Pricing</span>
+        <h2 class="section-headline">Simple, transparent pricing</h2>
+        <p class="section-subheadline">Start free during beta. Upgrade when you're ready</p>
+      </div>
+
+      <div class="pricing-grid">
+
+        <!-- Starter -->
+        <div class="pricing-card reveal reveal-delay-1">
+          <div class="pricing-tier-name">Starter</div>
+          <div class="pricing-price">
+            <span class="free-label">Free</span>
+            <span class="period">during beta</span>
+          </div>
+          <p class="pricing-desc">Perfect for solo recruiters exploring a smarter way to do outreach.</p>
+          <ul class="pricing-features">
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              100 prospects per month
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              AI email personalization
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              Gmail integration
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              Basic dashboard
+            </li>
+          </ul>
+          <button class="btn-outline" onclick="scrollToWaitlist()">Get Early Access</button>
+        </div>
+
+        <!-- Pro -->
+        <div class="pricing-card popular reveal reveal-delay-2">
+          <div class="popular-badge">Most Popular</div>
+          <div class="pricing-tier-name">Pro</div>
+          <div class="pricing-price">
+            <span class="amount">$149</span><span class="period">/mo</span>
+          </div>
+          <p class="pricing-desc">For growing agencies ready to scale outreach without scaling headcount.</p>
+          <ul class="pricing-features">
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              500 prospects per month
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              Everything in Starter
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              Automatic follow ups
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              Advanced campaign analytics
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              Priority support
+            </li>
+          </ul>
+          <button class="btn-primary large" style="width:100%;" onclick="scrollToWaitlist()">Get Early Access</button>
+        </div>
+
+        <!-- Agency -->
+        <div class="pricing-card reveal reveal-delay-3">
+          <div class="pricing-tier-name">Agency</div>
+          <div class="pricing-price">
+            <span class="amount">$349</span><span class="period">/mo</span>
+          </div>
+          <p class="pricing-desc">For established agencies that need volume, team access, and white-glove support.</p>
+          <ul class="pricing-features">
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              2000 prospects per month
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              Everything in Pro
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              Multiple team seats
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              Custom email sequences
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              Dedicated account manager
+            </li>
+            <li>
+              <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              White glove onboarding
+            </li>
+          </ul>
+          <button class="btn-outline" onclick="scrollToWaitlist()">Get Early Access</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FAQ
+  ============================================================ -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-header centered reveal">
+        <h2 class="section-headline">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-list" id="faqList">
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            How does Proxive find candidates?
+            <span class="faq-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            Proxive uses AI to search across public professional databases, LinkedIn, and the web to find candidates that match your brief. It looks at job titles, experience, location, skills, and recent activity to qualify each prospect before reaching out.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Will emails really sound personal and not automated?
+            <span class="faq-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            Yes. Proxive reads each candidate's specific background, their current role, past companies, skills, and recent work, and writes a unique email based on what it finds. No templates. Every email is different.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Does it connect to my Gmail?
+            <span class="faq-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            Yes. Proxive sends emails directly from your Gmail account via a secure OAuth connection. Candidates see your name and email, not a third party sender. This significantly improves deliverability and reply rates.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Can I review emails before they send?
+            <span class="faq-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            Absolutely. You can set Proxive to draft mode where you review and approve every email before it goes out, or auto-send mode where approved campaign emails send automatically. You're always in control.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            What tools does Proxive replace?
+            <span class="faq-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            Most recruiters use a combination of Apollo ($100/mo), Clay ($150/mo), and Instantly or Lemlist ($100/mo) to run outreach. Proxive replaces all three for $149/mo and removes the manual work of stitching them together.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            When will Proxive be available?
+            <span class="faq-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            We're currently in private beta. Join the waitlist to get early access. Beta users get free access and locked in pricing before our public launch.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FINAL CTA
+  ============================================================ -->
+  <section id="cta">
+    <div class="cta-beam"></div>
+    <div class="container">
+      <div class="cta-inner">
+        <div class="reveal">
+          <h2 class="section-headline">Stop doing manually what AI can do for you</h2>
+          <p class="section-subheadline">Join hundreds of recruiters getting early access to Proxive. Free during beta</p>
+        </div>
+
+        <div class="reveal reveal-delay-1">
+          <div class="newsletter-form-container">
+            <form class="waitlist-form newsletter-form" action="https://app.loops.so/api/newsletter-form/cmn85yiux0kp10i0qxkxjaca3" method="POST">
+              <input class="waitlist-input newsletter-form-input" placeholder="Enter your work email" required type="email" name="newsletter-form-input" />
+              <button type="submit" class="btn-primary large newsletter-form-button">Get Early Access</button>
+              <button type="button" class="btn-primary large newsletter-loading-button" style="display:none;">Please wait...</button>
+            </form>
+            <div class="waitlist-success newsletter-success" style="display:none;">
+              <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#60A5FA" opacity=".2"/><path d="M5 8l2 2 4-4" stroke="#60A5FA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              You're on the list! We'll be in touch.
+            </div>
+            <div class="newsletter-error">
+              <p class="newsletter-error-message">Oops! Something went wrong, please try again</p>
+            </div>
+            <button class="newsletter-back-button" type="button">&larr; Back</button>
+          </div>
+          <p class="cta-trust">No credit card required. Cancel anytime. Free during beta</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer>
+    <div class="container">
+      <div class="footer-main">
+        <!-- Brand -->
+        <div class="footer-brand">
+          <a href="#" class="nav-logo">
+            <div class="logo-mark">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white"/>
+              </svg>
+            </div>
+            <span class="logo-wordmark">Proxive</span>
+          </a>
+          <span class="footer-tagline">Recruiting outreach, automated</span>
+        </div>
+
+        <!-- Links -->
+        <nav class="footer-links">
+          <a href="#how-it-works">How it Works</a>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#faq">FAQ</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms</a>
+        </nav>
+
+        <!-- CTA -->
+        <a href="#hero" class="btn-primary">Join Waitlist</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="footer-bottom-inner">
+          <p class="footer-copy">Copyright 2026 Newbury AI LLC. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    /* -------------------------------------------------------
+       SCROLL REVEAL — Intersection Observer
+    ------------------------------------------------------- */
+    (function () {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      );
+
+      // Observe all .reveal elements
+      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+      // Also immediately reveal elements already in view
+      document.querySelectorAll('.reveal').forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight) {
+          el.classList.add('visible');
+        }
+      });
+    })();
+
+
+    /* -------------------------------------------------------
+       NAVIGATION — hamburger
+    ------------------------------------------------------- */
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+
+    function closeMobileMenu() {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    }
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+        closeMobileMenu();
+      }
+    });
+
+
+    /* -------------------------------------------------------
+       LOOPS — newsletter form handlers
+    ------------------------------------------------------- */
+    function submitHandler(event) {
+      event.preventDefault();
+      var container = event.target.parentNode;
+      var form = container.querySelector('.newsletter-form');
+      var formInput = container.querySelector('.newsletter-form-input');
+      var success = container.querySelector('.newsletter-success');
+      var errorContainer = container.querySelector('.newsletter-error');
+      var errorMessage = container.querySelector('.newsletter-error-message');
+      var backButton = container.querySelector('.newsletter-back-button');
+      var submitButton = container.querySelector('.newsletter-form-button');
+      var loadingButton = container.querySelector('.newsletter-loading-button');
+
+      var rateLimit = function() {
+        errorContainer.style.display = 'flex';
+        errorMessage.innerText = 'Too many signups, please try again in a little while';
+        submitButton.style.display = 'none';
+        formInput.style.display = 'none';
+        backButton.style.display = 'block';
+      };
+
+      submitButton.style.display = 'none';
+      loadingButton.style.display = 'flex';
+
+      var formBody = 'userGroup=&mailingLists=&email=' + encodeURIComponent(formInput.value);
+
+      fetch(event.target.action, {
+        method: 'POST',
+        body: formBody,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+        .then(function(res) { return Promise.all([res.ok, res.json()]); })
+        .then(function(arr) {
+          if (arr[0]) {
+            success.style.display = 'flex';
+            form.reset();
+          } else {
+            errorContainer.style.display = 'flex';
+            errorMessage.innerText = arr[1].message || 'Something went wrong';
+          }
+        })
+        .catch(function(err) {
+          if (err.message === 'Failed to fetch') { rateLimit(); return; }
+          errorContainer.style.display = 'flex';
+          if (err.message) errorMessage.innerText = err.message;
+          localStorage.setItem('loops-form-timestamp', '');
+        })
+        .finally(function() {
+          formInput.style.display = 'none';
+          loadingButton.style.display = 'none';
+          backButton.style.display = 'block';
+        });
+    }
+
+    function resetFormHandler(event) {
+      var container = event.target.parentNode;
+      var formInput = container.querySelector('.newsletter-form-input');
+      var success = container.querySelector('.newsletter-success');
+      var errorContainer = container.querySelector('.newsletter-error');
+      var errorMessage = container.querySelector('.newsletter-error-message');
+      var backButton = container.querySelector('.newsletter-back-button');
+      var submitButton = container.querySelector('.newsletter-form-button');
+
+      success.style.display = 'none';
+      errorContainer.style.display = 'none';
+      errorMessage.innerText = 'Oops! Something went wrong, please try again';
+      backButton.style.display = 'none';
+      formInput.style.display = 'flex';
+      submitButton.style.display = 'flex';
+    }
+
+    document.querySelectorAll('.newsletter-form-container').forEach(function(container) {
+      if (container.classList.contains('newsletter-handlers-added')) return;
+      container.querySelector('.newsletter-form').addEventListener('submit', submitHandler);
+      container.querySelector('.newsletter-back-button').addEventListener('click', resetFormHandler);
+      container.classList.add('newsletter-handlers-added');
+    });
+
+
+    /* -------------------------------------------------------
+       FAQ ACCORDION
+    ------------------------------------------------------- */
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-answer');
+      const isOpen = item.classList.contains('open');
+
+      // Close all
+      document.querySelectorAll('.faq-item').forEach((i) => {
+        i.classList.remove('open');
+        i.querySelector('.faq-answer').classList.remove('open');
+      });
+
+      // Open if was closed
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.classList.add('open');
+      }
+    }
+
+
+    /* -------------------------------------------------------
+       SCROLL TO WAITLIST — used by all CTA buttons
+    ------------------------------------------------------- */
+    function scrollToWaitlist() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        const input = document.querySelector('#heroFormContainer .newsletter-form-input');
+        if (input) input.focus({ preventScroll: true });
+      }, 700);
+    }
+
+    /* -------------------------------------------------------
+       SMOOTH SCROLL for nav links
+    ------------------------------------------------------- */
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        const href = anchor.getAttribute('href');
+        if (!href || href === '#') return;
+
+        if (href === '#hero' || href === '#waitlist') {
+          e.preventDefault();
+          scrollToWaitlist();
+          return;
+        }
+
+        const target = document.querySelector(href);
+        if (!target) return;
+
+        e.preventDefault();
+        const navH = document.getElementById('navbar').offsetHeight || 68;
+
+        // Sections with large top padding — scroll to the inner header
+        // so content lands right below the nav and nothing is pushed off-screen
+        if (href === '#how-it-works' || href === '#pricing') {
+          const inner = target.querySelector('.section-header');
+          const el = inner || target;
+          const top = el.getBoundingClientRect().top + window.scrollY - navH - 12;
+          window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+          return;
+        }
+
+        const top = target.getBoundingClientRect().top + window.scrollY - navH - 12;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      });
+    });
+
+
+    /* -------------------------------------------------------
+       PRODUCT DEMO
+    ------------------------------------------------------- */
+    let pdxCurrent = 0;
+
+    function pdxGoTo(n) {
+      const screens  = document.querySelectorAll('.pdx-screen');
+      const navItems = document.querySelectorAll('.pdx-nav-item');
+      screens.forEach((s, i) => {
+        s.classList.remove('pdx-active', 'pdx-exit');
+        if (i === n)          s.classList.add('pdx-active');
+        else if (i < n)       s.classList.add('pdx-exit');
+      });
+
+      navItems.forEach((el, i) => el.classList.toggle('pdx-active', i === n));
+
+      pdxCurrent = n;
+    }
+
+    function pdxNav(n) { pdxGoTo(n); }
+
+    function pdxRun() {
+      const btn = document.getElementById('pdxRunBtn');
+      const bar = document.getElementById('pdxProgressBar');
+      if (btn.disabled) return;
+      btn.disabled = true;
+      btn.innerHTML = '<div class="pdx-loading-dots"><span></span><span></span><span></span></div> Finding prospects...';
+
+      // Animate progress bar: 0 → 80% quickly, then hold
+      if (bar) {
+        bar.style.transition = 'none';
+        bar.style.width = '0%';
+        requestAnimationFrame(() => {
+          bar.style.transition = 'width 1.1s cubic-bezier(0.4, 0, 0.6, 1)';
+          bar.style.width = '80%';
+        });
+      }
+
+      setTimeout(() => {
+        // Snap to 100% then fade out
+        if (bar) {
+          bar.style.transition = 'width 0.3s ease';
+          bar.style.width = '100%';
+          setTimeout(() => {
+            bar.style.transition = 'width 0.5s ease, opacity 0.4s ease';
+            bar.style.opacity = '0';
+            setTimeout(() => { bar.style.width = '0%'; bar.style.opacity = '1'; }, 450);
+          }, 300);
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run Proxive';
+        pdxGoTo(1);
+      }, 1500);
+    }
+
+    function pdxShowEmail(id) {
+      document.querySelectorAll('.pdx-ep').forEach(e    => e.classList.toggle('pdx-active', e.dataset.id === id));
+      document.querySelectorAll('.pdx-eview').forEach(e => e.classList.toggle('pdx-active', e.id === 'pdx-mail-' + id));
+    }
+
+    function pdxGoEmail(id) {
+      pdxGoTo(2);
+      setTimeout(() => pdxShowEmail(id), 50);
+    }
+
+
+    /* -------------------------------------------------------
+       NAV scroll behavior — slight background shift
+    ------------------------------------------------------- */
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 20) {
+        nav.style.background = 'rgba(8, 13, 24, 0.96)';
+      } else {
+        nav.style.background = 'rgba(8, 13, 24, 0.85)';
+      }
+    }, { passive: true });
+
+
+    /* -------------------------------------------------------
+       SPOTLIGHT CARD EFFECT — mouse-tracking glow
+    ------------------------------------------------------- */
+    (function () {
+      const cardSelectors = '.pain-card, .step-card';
+      let rafId = null;
+      let lastX = -1, lastY = -1;
+
+      function updateCards(x, y) {
+        // Global glow coords for .feature-card border glow (background-attachment:fixed)
+        const root = document.documentElement;
+        root.style.setProperty('--gx', x);
+        root.style.setProperty('--gy', y);
+        root.style.setProperty('--gxp', (x / window.innerWidth).toFixed(4));
+
+        // Per-card relative coords for pain + step card spotlight
+        document.querySelectorAll(cardSelectors).forEach(card => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mouse-x', (x - rect.left) + 'px');
+          card.style.setProperty('--mouse-y', (y - rect.top) + 'px');
+        });
+      }
+
+      document.addEventListener('mousemove', (e) => {
+        lastX = e.clientX; lastY = e.clientY;
+        if (rafId) return;
+        rafId = requestAnimationFrame(() => {
+          updateCards(lastX, lastY);
+          rafId = null;
+        });
+      }, { passive: true });
+    })();
+
+
+    /* -------------------------------------------------------
+       ANIMATED STATS COUNTER — scroll-triggered
+    ------------------------------------------------------- */
+    (function () {
+      const stats = document.querySelectorAll('.stat-number[data-target]');
+      if (!stats.length) return;
+
+      function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+      function animateStat(el) {
+        const target = parseInt(el.dataset.target, 10);
+        const duration = 1600;
+        const start = performance.now();
+
+        function tick(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const value = Math.round(easeOutCubic(progress) * target);
+          el.textContent = value.toLocaleString();
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateStat(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+
+      stats.forEach(el => observer.observe(el));
+    })();
+
+
+    /* -------------------------------------------------------
+       MAGNETIC BUTTON EFFECT — subtle mouse tracking
+    ------------------------------------------------------- */
+    (function () {
+      document.querySelectorAll('.btn-primary').forEach(btn => {
+        btn.addEventListener('mousemove', function (e) {
+          const rect = this.getBoundingClientRect();
+          const x = (e.clientX - rect.left - rect.width  / 2) * 0.14;
+          const y = (e.clientY - rect.top  - rect.height / 2) * 0.14;
+          this.style.transition = 'transform 0.12s ease, filter 0.2s ease';
+          this.style.transform  = `translate(${x}px, ${y}px) scale(1.03)`;
+          this.style.filter     = 'brightness(1.08)';
+        });
+
+        btn.addEventListener('mouseleave', function () {
+          this.style.transition = 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease';
+          this.style.transform  = '';
+          this.style.filter     = '';
+        });
+      });
+    })();
+
+
+    /* -------------------------------------------------------
+       HOW IT WORKS — CONNECTOR FILL ANIMATION
+    ------------------------------------------------------- */
+    (function () {
+      const section = document.getElementById('how-it-works');
+      if (!section) return;
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            section.querySelectorAll('.hiw-connector-fill').forEach((el, i) => {
+              setTimeout(() => el.classList.add('in-view'), 500 + i * 400);
+            });
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.35 });
+      obs.observe(section);
+    })();
+
+    /* -------------------------------------------------------
+       PRICING CARD STAGGER REVEAL
+    ------------------------------------------------------- */
+    (function () {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+      document.querySelectorAll('.pricing-card:not(.reveal)').forEach((card, i) => {
+        card.classList.add('reveal');
+        card.style.transitionDelay = (i * 0.1) + 's';
+        observer.observe(card);
+      });
+    })();
+  </script>
+
+</body>
+</html>
