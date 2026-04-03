@@ -3652,6 +3652,30 @@
       padding: 0;
     }
     .newsletter-back-button:hover { color: rgba(255, 255, 255, 0.7); }
+
+    /* ============================================================
+       MOBILE — clean overrides (≤ 767px)
+    ============================================================ */
+    @media (max-width: 767px) {
+      /* Hero: hide the mock card entirely — copy + form take center stage */
+      .hero-right { display: none; }
+
+      /* Solution: hide the multi-panel app frame — section header still shows */
+      .pdx-frame { display: none; }
+      #solution { padding-top: 80px; padding-bottom: 80px; }
+      #solution .section-header { margin-bottom: 0; }
+
+      /* How It Works: stack cards vertically, drop horizontal connectors */
+      .hiw-timeline {
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 32px;
+      }
+      .hiw-connector { display: none; }
+
+      /* Founding card: tighter padding on mobile */
+      .founding-card { padding: 48px 28px; }
+    }
   </style>
 </head>
 <body>
@@ -4100,7 +4124,7 @@
     <div class="solution-orb solution-orb-3"></div>
     <div class="container">
       <div class="section-header centered reveal">
-        <h2 class="section-headline" style="color:#ffffff; font-size: clamp(28px, 4.2vw, 52px); white-space: nowrap;">Outreach that finally sounds like you</h2>
+        <h2 class="section-headline" style="color:#ffffff; font-size: clamp(28px, 4.2vw, 52px);">Outreach that finally sounds like you</h2>
         <p class="section-subheadline">Proxive researches the market and drafts outreach in your voice. You just hit send</p>
       </div>
 
