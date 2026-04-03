@@ -3654,17 +3654,52 @@
     .newsletter-back-button:hover { color: rgba(255, 255, 255, 0.7); }
 
     /* ============================================================
-       MOBILE — clean overrides (≤ 767px)
+       MOBILE HERO — always visible, no animations, no mock card
+    ============================================================ */
+    #hero-mobile {
+      display: none;
+      background: linear-gradient(135deg, #060A14 0%, #080D18 40%, #070C1A 70%, #050810 100%);
+      padding: 110px 0 80px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    #hero-mobile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(43, 127, 255, 0.18) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+    #hero-mobile .hero-inner-mobile {
+      position: relative;
+      z-index: 1;
+    }
+    #hero-mobile .hero-subheadline {
+      margin: 0 auto 40px;
+    }
+    #hero-mobile .waitlist-form {
+      flex-direction: column;
+      gap: 10px;
+      margin: 0 auto;
+      max-width: 440px;
+    }
+    #hero-mobile .waitlist-input { width: 100%; }
+    #hero-mobile .btn-primary.large { width: 100%; justify-content: center; }
+    #hero-mobile .waitlist-success { margin: 0 auto; }
+    #hero-mobile .hero-trust { text-align: center; }
+    #hero-mobile .social-proof-label { margin-top: 48px; }
+
+    /* ============================================================
+       MOBILE — overrides (≤ 767px)
     ============================================================ */
     @media (max-width: 767px) {
-      /* Hero: hide the mock card, keep all copy + form */
-      .hero-right { display: none; }
-      /* Force hero copy visible — bypass reveal animation opacity on mobile */
-      .hero-left .reveal {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
-      }
+      /* Swap in the mobile hero, hide the desktop one */
+      #hero { display: none; }
+      #hero-mobile { display: block; }
 
       /* Solution: hide the complex 3-panel app mockup */
       .pdx-frame { display: none; }
@@ -4018,6 +4053,75 @@
               <div class="logo-pill">Lever</div>
               <div class="logo-pill">Indeed</div>
             </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       MOBILE HERO (shown only on mobile ≤ 767px)
+  ============================================================ -->
+  <section id="hero-mobile">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="container">
+      <div class="hero-inner-mobile">
+
+        <div class="hero-eyebrow">Agentic Recruiting Intelligence</div>
+
+        <h1 class="hero-headline">
+          The AI Agent that<br>
+          <span class="gradient-text">sounds like you</span> not a bot
+        </h1>
+
+        <p class="hero-subheadline">
+          Proxive researches high value leads and writes outreach in your personal style. No generic templates. Just personalized emails that actually get replies
+        </p>
+
+        <div class="newsletter-form-container">
+          <form class="waitlist-form newsletter-form" action="https://app.loops.so/api/newsletter-form/cmn85yiux0kp10i0qxkxjaca3" method="POST">
+            <input class="waitlist-input newsletter-form-input" placeholder="Enter your work email" required type="email" name="newsletter-form-input" />
+            <button type="submit" class="btn-primary large newsletter-form-button">🚀 Secure My Spot</button>
+            <button type="button" class="btn-primary large newsletter-loading-button" style="display:none;">Please wait...</button>
+          </form>
+          <div class="waitlist-success newsletter-success" style="display:none;">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#60A5FA" opacity=".2"/><path d="M5 8l2 2 4-4" stroke="#60A5FA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            You're on the list! We'll be in touch.
+          </div>
+          <div class="newsletter-error">
+            <p class="newsletter-error-message">Oops! Something went wrong, please try again</p>
+          </div>
+          <button class="newsletter-back-button" type="button">&larr; Back</button>
+        </div>
+
+        <p class="hero-trust" style="margin-top:14px;">Join 500+ recruiters already on the waitlist. Free during beta</p>
+
+        <p class="social-proof-label">Recruiters from teams at:</p>
+        <div class="logo-marquee-wrapper">
+          <div class="logo-marquee-track">
+            <div class="logo-pill">Google</div>
+            <div class="logo-pill">Salesforce</div>
+            <div class="logo-pill">HubSpot</div>
+            <div class="logo-pill">Stripe</div>
+            <div class="logo-pill">Notion</div>
+            <div class="logo-pill">LinkedIn</div>
+            <div class="logo-pill">Workday</div>
+            <div class="logo-pill">Greenhouse</div>
+            <div class="logo-pill">Lever</div>
+            <div class="logo-pill">Indeed</div>
+            <div class="logo-pill">Google</div>
+            <div class="logo-pill">Salesforce</div>
+            <div class="logo-pill">HubSpot</div>
+            <div class="logo-pill">Stripe</div>
+            <div class="logo-pill">Notion</div>
+            <div class="logo-pill">LinkedIn</div>
+            <div class="logo-pill">Workday</div>
+            <div class="logo-pill">Greenhouse</div>
+            <div class="logo-pill">Lever</div>
+            <div class="logo-pill">Indeed</div>
           </div>
         </div>
 
