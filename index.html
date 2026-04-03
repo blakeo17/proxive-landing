@@ -3657,12 +3657,16 @@
        MOBILE — clean overrides (≤ 767px)
     ============================================================ */
     @media (max-width: 767px) {
-      /* Hero card: remove decorative tilt so it sits flat below the copy */
-      .hero-mock { transform: none; }
-      /* Tighten gap between copy and card */
-      .hero-inner { gap: 40px; }
+      /* Hero: hide the mock card, keep all copy + form */
+      .hero-right { display: none; }
+      /* Force hero copy visible — bypass reveal animation opacity on mobile */
+      .hero-left .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
 
-      /* Solution: hide the complex 3-panel app mockup — headline still shows */
+      /* Solution: hide the complex 3-panel app mockup */
       .pdx-frame { display: none; }
       #solution { padding-top: 80px; padding-bottom: 80px; }
       #solution .section-header { margin-bottom: 0; }
