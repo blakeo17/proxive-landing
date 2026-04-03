@@ -3657,15 +3657,17 @@
        MOBILE — clean overrides (≤ 767px)
     ============================================================ */
     @media (max-width: 767px) {
-      /* Hero: hide the mock card entirely — copy + form take center stage */
-      .hero-right { display: none; }
+      /* Hero card: remove decorative tilt so it sits flat below the copy */
+      .hero-mock { transform: none; }
+      /* Tighten gap between copy and card */
+      .hero-inner { gap: 40px; }
 
-      /* Solution: hide the multi-panel app frame — section header still shows */
+      /* Solution: hide the complex 3-panel app mockup — headline still shows */
       .pdx-frame { display: none; }
       #solution { padding-top: 80px; padding-bottom: 80px; }
       #solution .section-header { margin-bottom: 0; }
 
-      /* How It Works: stack cards vertically, drop horizontal connectors */
+      /* How It Works: stack the three step cards vertically */
       .hiw-timeline {
         flex-direction: column;
         gap: 20px;
@@ -3673,7 +3675,7 @@
       }
       .hiw-connector { display: none; }
 
-      /* Founding card: tighter padding on mobile */
+      /* Founding card: tighter padding */
       .founding-card { padding: 48px 28px; }
     }
   </style>
